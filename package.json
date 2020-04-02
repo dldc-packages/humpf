@@ -1,0 +1,53 @@
+{
+  "name": "humpf",
+  "version": "0.0.0",
+  "description": "Damped Spring position as a function of time",
+  "keywords": [
+    "spring",
+    "damped",
+    "damped-spring",
+    "simulation",
+    "for-t",
+    "time",
+    "decay",
+    "smooth"
+  ],
+  "homepage": "https://github.com/etienne-dldc/humpf#readme",
+  "bugs": {
+    "url": "https://github.com/etienne-dldc/humpf/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/etienne-dldc/humpf.git"
+  },
+  "license": "MIT",
+  "author": "Etienne Dldc <e.deladonchamps@gmail.com>",
+  "main": "dist/index.js",
+  "module": "dist/humpf.esm.js",
+  "typings": "dist/index.d.ts",
+  "directories": {
+    "test": "tests"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdx build",
+    "pub": "yarn build && np",
+    "start": "tsdx watch",
+    "test": "tsdx test --coverage",
+    "codecov": "codecov"
+  },
+  "dependencies": {
+    "tslib": "^1.11.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.1.4",
+    "codecov": "^3.6.5",
+    "core-js": "3",
+    "np": "^5.2.1",
+    "ts-node": "^8.6.2",
+    "tsdx": "^0.13.1",
+    "typescript": "^3.8.3"
+  }
+}
