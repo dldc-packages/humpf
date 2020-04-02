@@ -30,7 +30,7 @@ function findEquilibrium(velocity: number, angularFrequency: number = 1) {
 }
 
 function normalizeT(t: number, timeScale: number, timeStart: number): number {
-  return Math.max(0, timeStart + t * timeScale);
+  return Math.max(0, t * timeScale - timeStart);
 }
 
 function spring(options: SpringConfig): Spring {

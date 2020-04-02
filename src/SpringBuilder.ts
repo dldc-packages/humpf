@@ -1,5 +1,7 @@
 import { Spring, SpringConfig } from './Spring';
 
+const DEFAULT_TIME_SCALE = 1 / 100;
+
 export class SpringBuilder {
   private springCache: Spring | null = null;
   public readonly config: Readonly<SpringConfig>;
@@ -11,7 +13,7 @@ export class SpringBuilder {
       equilibrium = 100,
       angularFrequency = 1,
       dampingRatio = 1,
-      timeScale = 100,
+      timeScale = DEFAULT_TIME_SCALE,
       timeStart = 0
     } = config;
     this.config = {
