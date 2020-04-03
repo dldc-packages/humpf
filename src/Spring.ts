@@ -1,22 +1,5 @@
-import { invariant, EPSILON } from './utils';
-import { SpringBuilder } from './SpringBuilder';
-
-export interface SpringResult {
-  pos: number;
-  vel: number;
-}
-
-export interface SpringConfig {
-  position: number; // initial velocity
-  velocity: number; // initial velocity
-  equilibrium: number; // position to approach
-  angularFrequency: number; // angular frequency of motion
-  dampingRatio: number; // damping ratio of motion
-  timeScale: number; // multiply time by this value
-  timeStart: number; // time at which the annimation should start (after timeScale)
-}
-
-export type Spring = (t: number) => SpringResult;
+import { invariant, EPSILON, DEFAULT_TIME_SCALE } from './utils';
+import { SpringConfig, SpringFn } from './types';
 
 export const Spring = {
   create: spring,
@@ -34,16 +17,16 @@ function normalizeT(t: number, timeScale: number, timeStart: number): number {
   return Math.max(0, t * timeScale - timeStart * timeScale);
 }
 
-function spring(options: Partial<SpringConfig> = {}): Spring {
+function spring(options: Partial<SpringConfig> = {}): SpringFn {
   const {
-    velocity,
-    equilibrium,
-    angularFrequency,
-    dampingRatio,
-    position,
-    timeScale,
-    timeStart
-  } = new SpringBuilder(options).config;
+    position = 0,
+    velocity = 0,
+    equilibrium = 100,
+    angularFrequency = 1,
+    dampingRatio = 1,
+    timeScale = DEFAULT_TIME_SCALE,
+    timeStart = 0
+  } = options;
 
   invariant(dampingRatio >= 0, 'Damping Ration must be >= 0');
   invariant(angularFrequency >= 0, 'Angular Frequency must be >= 0');
@@ -102,7 +85,7 @@ function springOverDamped(
   dampingRatio: number,
   timeScale: number,
   timeStart: number
-): Spring {
+): SpringFn {
   const za = -angularFrequency * dampingRatio;
   const zb = angularFrequency * Math.sqrt(dampingRatio * dampingRatio - 1);
   const z1 = za - zb;
@@ -137,7 +120,7 @@ function springUnderDamped(
   dampingRatio: number,
   timeScale: number,
   timeStart: number
-): Spring {
+): SpringFn {
   const omegaZeta = angularFrequency * dampingRatio;
   const alpha = angularFrequency * Math.sqrt(1 - dampingRatio * dampingRatio);
 
@@ -169,7 +152,7 @@ function springCriticallyDamped(
   angularFrequency: number,
   timeScale: number,
   timeStart: number
-): Spring {
+): SpringFn {
   const oldPos = position - equilibrium; // update in equilibrium relative space
   return (t: number) => {
     const nt = normalizeT(t, timeScale, timeStart);

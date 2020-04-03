@@ -1,9 +1,9 @@
-import { Spring, SpringConfig } from './Spring';
-
-const DEFAULT_TIME_SCALE = 1 / 100;
+import { Spring } from './Spring';
+import { SpringFn, SpringConfig } from './types';
+import { DEFAULT_TIME_SCALE } from './utils';
 
 export class SpringBuilder {
-  private springCache: Spring | null = null;
+  private springCache: SpringFn | null = null;
   public readonly config: Readonly<SpringConfig>;
 
   constructor(config: Partial<SpringConfig> = {}) {
@@ -27,7 +27,7 @@ export class SpringBuilder {
     };
   }
 
-  get spring(): Spring {
+  get spring(): SpringFn {
     if (!this.springCache) {
       this.springCache = Spring.create(this.config);
     }
