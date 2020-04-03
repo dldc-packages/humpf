@@ -1,4 +1,5 @@
 import { invariant, EPSILON } from './utils';
+import { SpringBuilder } from './SpringBuilder';
 
 export interface SpringResult {
   pos: number;
@@ -33,7 +34,7 @@ function normalizeT(t: number, timeScale: number, timeStart: number): number {
   return Math.max(0, t * timeScale - timeStart * timeScale);
 }
 
-function spring(options: SpringConfig): Spring {
+function spring(options: Partial<SpringConfig> = {}): Spring {
   const {
     velocity,
     equilibrium,
@@ -42,7 +43,7 @@ function spring(options: SpringConfig): Spring {
     position,
     timeScale,
     timeStart
-  } = options;
+  } = new SpringBuilder(options).config;
 
   invariant(dampingRatio >= 0, 'Damping Ration must be >= 0');
   invariant(angularFrequency >= 0, 'Angular Frequency must be >= 0');
