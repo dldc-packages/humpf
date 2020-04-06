@@ -71,7 +71,7 @@ export class SpringBuilder {
     return this.springCache;
   }
 
-  public extends(config: Partial<SpringConfig>): SpringBuilder {
+  public extends(config: SpringBuilderConfig): SpringBuilder {
     return new SpringBuilder({
       ...this.config,
       ...config
@@ -97,15 +97,15 @@ export class SpringBuilder {
    * PRESETS
    */
 
-  public static default(config: Partial<SpringConfig> = {}): SpringBuilder {
+  public static default(config: SpringBuilderConfig = {}): SpringBuilder {
     return new SpringBuilder(config);
   }
 
-  public static decay(config: Partial<SpringConfig> = {}): SpringBuilder {
+  public static decay(config: SpringBuilderConfig = {}): SpringBuilder {
     return new SpringBuilder(config).decay();
   }
 
-  public static gentle(config: Partial<SpringConfig> = {}): SpringBuilder {
+  public static gentle(config: SpringBuilderConfig = {}): SpringBuilder {
     return new SpringBuilder({
       angularFrequency: 0.6,
       dampingRatio: 0.6,
