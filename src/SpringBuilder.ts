@@ -1,12 +1,26 @@
 import { Spring } from './Spring';
-import { SpringFn, SpringConfig } from './types';
+import { SpringFn, SpringConfig, SpringResult } from './types';
 import { DEFAULT_TIME_SCALE } from './utils';
+
+export interface SpringBuilderConfig extends Partial<SpringConfig> {
+  optimized?: boolean | OptimizedConfig;
+}
+
+export interface OptimizedConfig {
+  velocityThreshold: number;
+  positionThreshold: number;
+}
+
+export const DEFAULT_OPTIMIZED: OptimizedConfig = {
+  positionThreshold: 0.01,
+  velocityThreshold: 0.001
+};
 
 export class SpringBuilder {
   private springCache: SpringFn | null = null;
-  public readonly config: Readonly<SpringConfig>;
+  public readonly config: Readonly<Required<SpringBuilderConfig>>;
 
-  constructor(config: Partial<SpringConfig> = {}) {
+  constructor(config: SpringBuilderConfig = {}) {
     const {
       position = 0,
       velocity = 0,
@@ -14,7 +28,8 @@ export class SpringBuilder {
       angularFrequency = 1,
       dampingRatio = 1,
       timeScale = DEFAULT_TIME_SCALE,
-      timeStart = 0
+      timeStart = 0,
+      optimized = true
     } = config;
     this.config = {
       position,
@@ -23,13 +38,35 @@ export class SpringBuilder {
       angularFrequency,
       dampingRatio,
       timeScale,
-      timeStart
+      timeStart,
+      optimized
     };
   }
 
   get spring(): SpringFn {
     if (!this.springCache) {
-      this.springCache = Spring.create(this.config);
+      const spr = Spring.create(this.config);
+      if (this.config.optimized === false) {
+        this.springCache = spr;
+      } else {
+        const optimized =
+          this.config.optimized === true ? DEFAULT_OPTIMIZED : this.config.optimized;
+        let resolved = false;
+        const resolvedResult: SpringResult = { pos: this.config.equilibrium, vel: 0 };
+        this.springCache = (t: number) => {
+          if (resolved) {
+            return resolvedResult;
+          }
+          const val = spr(t);
+          if (Math.abs(val.vel) < optimized.velocityThreshold) {
+            if (Math.abs(val.pos - resolvedResult.pos) < optimized.positionThreshold) {
+              resolved = true;
+              return resolvedResult;
+            }
+          }
+          return val;
+        };
+      }
     }
     return this.springCache;
   }
