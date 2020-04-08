@@ -1,5 +1,5 @@
 import { Spring } from './Spring';
-import { SpringFn, SpringConfig } from './types';
+import { SpringFn, SpringConfig, SpringResult } from './types';
 import { DEFAULT_TIME_SCALE } from './utils';
 
 export type SpringBuilderConfig = Partial<SpringConfig>;
@@ -31,8 +31,15 @@ export class SpringBuilder {
 
   get spring(): SpringFn {
     if (!this.springCache) {
-      const spr = Spring.create(this.config);
-      this.springCache = spr;
+      const isStatic =
+        this.config.position === this.config.equilibrium && this.config.velocity === 0;
+      if (isStatic) {
+        const result: SpringResult = { pos: this.config.equilibrium, vel: 0 };
+        this.springCache = () => result;
+      } else {
+        const spr = Spring.create(this.config);
+        this.springCache = spr;
+      }
     }
     return this.springCache;
   }
