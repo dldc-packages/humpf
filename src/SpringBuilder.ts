@@ -4,6 +4,7 @@ import { DEFAULT_TIME_SCALE } from './utils';
 
 export interface SpringBuilderConfig extends Partial<SpringConfig> {
   optimized?: boolean | OptimizedConfig;
+  onDone?: () => void;
 }
 
 export interface OptimizedConfig {
@@ -29,7 +30,8 @@ export class SpringBuilder {
       dampingRatio = 1,
       timeScale = DEFAULT_TIME_SCALE,
       timeStart = 0,
-      optimized = true
+      optimized = true,
+      onDone = () => {}
     } = config;
     this.config = {
       position,
@@ -39,7 +41,8 @@ export class SpringBuilder {
       dampingRatio,
       timeScale,
       timeStart,
-      optimized
+      optimized,
+      onDone
     };
   }
 
@@ -51,16 +54,19 @@ export class SpringBuilder {
       } else {
         const optimized =
           this.config.optimized === true ? DEFAULT_OPTIMIZED : this.config.optimized;
-        let resolved = false;
+        let done = false;
         const resolvedResult: SpringResult = { pos: this.config.equilibrium, vel: 0 };
         this.springCache = (t: number) => {
-          if (resolved) {
+          if (done) {
             return resolvedResult;
           }
           const val = spr(t);
           if (Math.abs(val.vel) < optimized.velocityThreshold) {
             if (Math.abs(val.pos - resolvedResult.pos) < optimized.positionThreshold) {
-              resolved = true;
+              done = true;
+              if (this.config.onDone) {
+                this.config.onDone();
+              }
               return resolvedResult;
             }
           }
