@@ -1,21 +1,8 @@
 import { Spring } from './Spring';
-import { SpringFn, SpringConfig, SpringResult } from './types';
+import { SpringFn, SpringConfig } from './types';
 import { DEFAULT_TIME_SCALE } from './utils';
 
-export interface SpringBuilderConfig extends Partial<SpringConfig> {
-  optimized?: boolean | OptimizedConfig;
-  onDone?: () => void;
-}
-
-export interface OptimizedConfig {
-  velocityThreshold: number;
-  positionThreshold: number;
-}
-
-export const DEFAULT_OPTIMIZED: OptimizedConfig = {
-  positionThreshold: 0.01,
-  velocityThreshold: 0.001
-};
+export type SpringBuilderConfig = Partial<SpringConfig>;
 
 export class SpringBuilder {
   private springCache: SpringFn | null = null;
@@ -29,9 +16,7 @@ export class SpringBuilder {
       angularFrequency = 1,
       dampingRatio = 1,
       timeScale = DEFAULT_TIME_SCALE,
-      timeStart = 0,
-      optimized = true,
-      onDone = () => {}
+      timeStart = 0
     } = config;
     this.config = {
       position,
@@ -40,41 +25,23 @@ export class SpringBuilder {
       angularFrequency,
       dampingRatio,
       timeScale,
-      timeStart,
-      optimized,
-      onDone
+      timeStart
     };
   }
 
   get spring(): SpringFn {
     if (!this.springCache) {
       const spr = Spring.create(this.config);
-      if (this.config.optimized === false) {
-        this.springCache = spr;
-      } else {
-        const optimized =
-          this.config.optimized === true ? DEFAULT_OPTIMIZED : this.config.optimized;
-        let done = false;
-        const resolvedResult: SpringResult = { pos: this.config.equilibrium, vel: 0 };
-        this.springCache = (t: number) => {
-          if (done) {
-            return resolvedResult;
-          }
-          const val = spr(t);
-          if (Math.abs(val.vel) < optimized.velocityThreshold) {
-            if (Math.abs(val.pos - resolvedResult.pos) < optimized.positionThreshold) {
-              done = true;
-              if (this.config.onDone) {
-                this.config.onDone();
-              }
-              return resolvedResult;
-            }
-          }
-          return val;
-        };
-      }
+      this.springCache = spr;
     }
     return this.springCache;
+  }
+
+  public withEquilibrium(equilibrium: number): SpringBuilder {
+    return new SpringBuilder({
+      ...this.config,
+      equilibrium
+    });
   }
 
   public extends(config: SpringBuilderConfig): SpringBuilder {
