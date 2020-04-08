@@ -74,6 +74,16 @@ export class SpringBuilder {
     return new SpringBuilder(config);
   }
 
+  public static static(equilibrium: number): SpringBuilder {
+    return new SpringBuilder({
+      velocity: 0,
+      dampingRatio: 1,
+      angularFrequency: 1,
+      position: equilibrium,
+      equilibrium
+    });
+  }
+
   public static decay(config: SpringBuilderConfig = {}): SpringBuilder {
     return new SpringBuilder(config).decay();
   }
