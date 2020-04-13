@@ -73,6 +73,14 @@ export class SpringBuilder {
     });
   }
 
+  public static(equilibrium: number): SpringBuilder {
+    return this.extends({
+      velocity: 0,
+      position: equilibrium,
+      equilibrium
+    });
+  }
+
   /**
    * PRESETS
    */
