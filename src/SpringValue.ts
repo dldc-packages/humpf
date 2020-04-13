@@ -12,6 +12,7 @@ export interface SpringValue {
   done: (t: number) => boolean;
   update: (t: number, config: SpringBuilderConfig | SpringBuilder) => void;
   replace: (t: number, config: SpringBuilderConfig) => void;
+  getConfig: () => Readonly<Required<SpringBuilderConfig>>;
 }
 
 export function SpringValue(
@@ -25,6 +26,7 @@ export function SpringValue(
 
   return {
     get,
+    getConfig,
     done,
     update,
     replace
@@ -32,6 +34,10 @@ export function SpringValue(
 
   function get(t: number): SpringResult {
     return spring(t);
+  }
+
+  function getConfig(): Readonly<Required<SpringBuilderConfig>> {
+    return builder.config;
   }
 
   function update(t: number, config: SpringBuilderConfig | SpringBuilder): void {
