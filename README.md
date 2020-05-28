@@ -47,48 +47,51 @@ Spring.create({
   velocity: 0, // initial velocity
   angularFrequency: 1, // how fast does it move ?
   dampingRatio: 1, // how much is it slowed down ?
-  timeStart: 0 // time at which the annimation should start
+  timeStart: 0, // time at which the annimation should start
   timeScale: 1 / 100, // [ADVANCED] change time scale
 })
 ```
 
-### `position` [=`0`]
+### `position` (default `0`)
 
-This is the initiale position of the spring: the value when it starts.
+This is the initiale position of the spring: the value when it starts (at `timeStart`).
 
-### `equilibrium` [=`100`]
+### `equilibrium` (default `100`)
 
 The equilibrium position of the spring: the value it will reach over time. If your spring bounce it will occilate around this value.
 
-### `velocity` [=`0`]
+### `velocity` (default `0`)
 
 The initial velocity of the spring. `0` mean it's stationary.
 
 **Example**: If your spring goes from `0` to `100`, a positive `velocity` mean it's already going up so it will go faster. A negative velocity means it's going in the oposite direction and will go down a little before going up.
 
-### `angularFrequency` [=`0`]
+### `angularFrequency` (default `0`)
 
 The angular frequency of your spring define how fast it wants to move. If you have a very bouncy spring (not much friction), the angular frequency define how many back and forth will happen.
 
 **Example**: `10` mean a lot of back and forth, so your spring will move fast. `0.5` is much lower so your spring will be slower
 
-### `dampingRatio` [=`1`]
+### `dampingRatio` (default `1`)
 
-The damping ratio define how much resistance (friction) is opposed to your spring.
-If the damping ratio is less than `1` your spring will overshoot and bounce. If it's under `1` it will not.
-If the damping ratio is `1` it will reach the equilibrium as fast as possible without bouncing.
+The damping ratio define how much resistance (friction) is opposed to your spring.  
+If the damping ratio is less than `1` your spring will overshoot and bounce. If it's under `1` it will not.  
+If the damping ratio is `1` it will reach the equilibrium as fast as possible without bouncing.  
 
-### `timeStart` [=`0`]
+### `timeStart` (default `0`)
 
-The time at which the spring should start. If you pass a time before the `timeStart` to a spring it will predent like it's `0`.
+The time at which the spring should start.  
+Usually you want to pass the current time to start a spring "now".  
 
-### `timeScale` [=`1 / 100`]
+**Note**: spring does not work in reverse, so you you try to get a value for a time before `timeStart` it will return the initial state.
 
-The `timeScale` allow you to change how time is interpreted. The default value `1/100` wille make your spring to take about a second to reach equilibrium. You probably don't need to change this.
+### `timeScale` (default `1 / 100`)
+
+The `timeScale` allow you to change how time is interpreted. The default value `1/100` will make your spring to take about a second to reach equilibrium. You probably don't need to change this.
 
 ## SpringBuilder
 
-The `SpringBuilder` builder allow you to easily manipulate spring config, use presets, and more.
+The `SpringBuilder` allow you to easily manipulate spring config, use presets, and more.
 
 ### Creating a `SpringBuilder`
 
