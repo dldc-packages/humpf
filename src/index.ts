@@ -1,5 +1,3 @@
-export { AngularFrequency } from './AngularFrequency';
-export { Spring } from './Spring';
-export { SpringBuilder, SpringBuilderConfig } from './SpringBuilder';
+export { Spring, SpringFn } from './Spring';
 export { SpringValue, SpringValueOptions } from './SpringValue';
-export { SpringConfig, SpringResult, SpringFn } from './types';
+export { SpringConfig } from './SpringConfig';

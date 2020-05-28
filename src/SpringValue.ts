@@ -1,84 +1,109 @@
-import { SpringBuilderConfig, SpringBuilder } from './SpringBuilder';
-import { SpringFn, SpringResult } from './types';
+import { SpringConfig } from './SpringConfig';
+import { Spring } from './Spring';
 
 export interface SpringValueOptions {
   velocityThreshold: number;
   positionThreshold: number;
-  onUpdate: () => void;
+  onSpringChange: () => void;
+  now: () => number;
 }
 
 export interface SpringValue {
-  get: SpringFn;
-  done: (t: number) => boolean;
-  update: (t: number, config: SpringBuilderConfig | SpringBuilder) => void;
-  replace: (t: number, config: SpringBuilderConfig) => void;
-  getConfig: () => Readonly<Required<SpringBuilderConfig>>;
+  position: () => number;
+  velocity: () => number;
+  stable: () => boolean;
+  getConfig: () => Readonly<Required<SpringConfig>>;
+  // updates
+  decay: (angularFrequency?: number) => void;
+  update: (config: Partial<SpringConfig>) => void;
+  replace: (config: Partial<SpringConfig>) => void;
 }
 
 export function SpringValue(
-  config: SpringBuilderConfig | SpringBuilder = {},
+  initialConfig: Partial<SpringConfig> = {},
   options: Partial<SpringValueOptions> = {}
 ): SpringValue {
-  const { positionThreshold = 0.01, velocityThreshold = 0.001, onUpdate } = options;
-  let builder: SpringBuilder =
-    config instanceof SpringBuilder ? config : SpringBuilder.default(config);
-  let spring: SpringFn = builder.spring;
+  const {
+    onSpringChange,
+    positionThreshold = 0.01,
+    velocityThreshold = 0.001,
+    now = Date.now
+  } = options;
+
+  let config = SpringConfig.basic({ timeStart: now(), ...initialConfig });
+
+  let spring = Spring(config);
 
   return {
-    get,
+    position,
+    velocity,
+    stable,
     getConfig,
-    done,
+    decay,
     update,
     replace
   };
 
-  function get(t: number): SpringResult {
-    return spring(t);
+  function position(): number {
+    return spring(now()).pos;
   }
 
-  function getConfig(): Readonly<Required<SpringBuilderConfig>> {
-    return builder.config;
+  function velocity(): number {
+    return spring(now()).vel;
   }
 
-  function update(t: number, config: SpringBuilderConfig | SpringBuilder): void {
-    const configResolved = config instanceof SpringBuilder ? config.config : config;
-    const current = spring(t);
-    const resolvedConfig: SpringBuilderConfig = {
-      ...configResolved,
-      timeStart: t,
-      position: current.pos,
-      velocity: current.vel
-    };
-    builder = builder.extends(resolvedConfig);
-    spring = builder.spring;
-    if (onUpdate) {
-      onUpdate();
-    }
-  }
-
-  function replace(t: number, config: SpringBuilderConfig): void {
-    const current = spring(t);
-    const resolvedConfig: SpringBuilderConfig = {
-      timeStart: t,
-      position: current.pos,
-      velocity: current.vel,
-      ...config
-    };
-    builder = builder.extends(resolvedConfig);
-    spring = builder.spring;
-    if (onUpdate) {
-      onUpdate();
-    }
-  }
-
-  function done(t: number): boolean {
-    const val = spring(t);
+  function stable(): boolean {
+    const val = spring(now());
     if (
       Math.abs(val.vel) < velocityThreshold &&
-      Math.abs(val.pos - builder.config.equilibrium) < positionThreshold
+      Math.abs(val.pos - config.equilibrium) < positionThreshold
     ) {
       return true;
     }
     return false;
+  }
+
+  function getConfig(): Readonly<Required<SpringConfig>> {
+    return config;
+  }
+
+  function decay(angularFrequency: number = config.angularFrequency): void {
+    config = SpringConfig.decay({
+      ...config,
+      angularFrequency,
+      timeStart: now(),
+      position: position(),
+      velocity: velocity()
+    });
+    spring = Spring(config);
+    if (onSpringChange) {
+      onSpringChange();
+    }
+  }
+
+  function update(config: Partial<SpringConfig>) {
+    config = {
+      ...config,
+      timeStart: now(),
+      position: position(),
+      velocity: velocity()
+    };
+    spring = Spring(config);
+    if (onSpringChange) {
+      onSpringChange();
+    }
+  }
+
+  function replace(config: Partial<SpringConfig>): void {
+    config = {
+      timeStart: now(),
+      position: position(),
+      velocity: velocity(),
+      ...config
+    };
+    spring = Spring(config);
+    if (onSpringChange) {
+      onSpringChange();
+    }
   }
 }

@@ -33,10 +33,11 @@
   ],
   "scripts": {
     "build": "tsdx build",
+    "codecov": "codecov",
     "pub": "yarn build && np",
     "start": "tsdx watch",
     "test": "tsdx test --coverage",
-    "codecov": "codecov"
+    "test:watch": "tsdx test --watch --coverage"
   },
   "dependencies": {
     "tslib": "^2.0.0"

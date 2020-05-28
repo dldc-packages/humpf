@@ -1,32 +1,23 @@
-import { invariant, EPSILON, DEFAULT_TIME_SCALE } from './utils';
-import { SpringConfig, SpringFn } from './types';
+import { invariant, EPSILON, normalizeT } from './utils';
+import { SpringConfig } from './SpringConfig';
 
-export const Spring = {
-  create: spring,
-  findEquilibrium
-};
-
-/**
- * Find the equilibrium position for a Critically damped spring
- */
-function findEquilibrium(velocity: number, angularFrequency: number = 1) {
-  return velocity / angularFrequency;
+export interface SpringResult {
+  pos: number;
+  vel: number;
 }
 
-function normalizeT(t: number, timeScale: number, timeStart: number): number {
-  return Math.max(0, t * timeScale - timeStart * timeScale);
-}
+export type SpringFn = (t: number) => SpringResult;
 
-function spring(options: Partial<SpringConfig> = {}): SpringFn {
+export function Spring(options: Partial<SpringConfig> = {}): SpringFn {
   const {
-    position = 0,
-    velocity = 0,
-    equilibrium = 100,
-    angularFrequency = 1,
-    dampingRatio = 1,
-    timeScale = DEFAULT_TIME_SCALE,
-    timeStart = 0
-  } = options;
+    position,
+    velocity,
+    equilibrium,
+    angularFrequency,
+    dampingRatio,
+    timeScale,
+    timeStart
+  } = SpringConfig.basic(options);
 
   invariant(dampingRatio >= 0, 'Damping Ration must be >= 0');
   invariant(angularFrequency >= 0, 'Angular Frequency must be >= 0');
