@@ -57,9 +57,10 @@ function decay(config: Partial<SpringConfig>): SpringConfig {
   };
 }
 
-function staticConfig(equilibrium: number): SpringConfig {
+function staticConfig(equilibrium: number, config: Partial<SpringConfig> = {}): SpringConfig {
   return {
     ...DEFAULT_CONFIG,
+    ...config,
     velocity: 0,
     position: equilibrium,
     equilibrium
