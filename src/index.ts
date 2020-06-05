@@ -1,3 +1,3 @@
-export { Spring, SpringFn } from './Spring';
+export { Spring, SpringFn, SpringResult } from './Spring';
 export { SpringValue, SpringValueOptions } from './SpringValue';
 export { SpringConfig } from './SpringConfig';
