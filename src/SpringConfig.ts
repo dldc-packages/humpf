@@ -1,69 +1,52 @@
 export const DEFAULT_TIME_SCALE = 1 / 100;
 
 export interface SpringConfig {
-  position: number; // initial velocity
-  velocity: number; // initial velocity
-  equilibrium: number; // position to approach
-  angularFrequency: number; // angular frequency of motion
-  dampingRatio: number; // damping ratio of motion
-  timeScale: number; // multiply time by this value
-  timeStart: number; // time at which the annimation should start (after timeScale)
+  position: number;
+  velocity: number;
+  equilibrium: number;
+  angularFrequency: number;
+  dampingRatio: number;
+  timeScale: number;
+  timeStart: number;
 }
 
+const DEFAULT_CONFIG: SpringConfig = {
+  // initial position
+  position: 0,
+  // initial velocity
+  velocity: 0,
+  // position to approach
+  equilibrium: 100,
+  // angular frequency of motion
+  angularFrequency: 1,
+  // damping ratio of motion
+  dampingRatio: 1,
+  // [advanced] multiply time by this value
+  timeScale: 1 / 100,
+  // time at which the annimation should start (after timeScale)
+  timeStart: 0
+};
+
 export const SpringConfig = {
+  // presets
   basic,
-  decay,
-  static: staticConfig,
   gentle,
   wobbly,
   stiff,
   slow,
+  // special
+  decay,
+  static: staticConfig,
   // utils
   findEquilibrium,
   angularFrequencyFromMass,
   angularFrequencyFromSpringConstant
 };
 
-const DEFAULT_CONFIG: SpringConfig = {
-  position: 0,
-  velocity: 0,
-  equilibrium: 100,
-  angularFrequency: 1,
-  dampingRatio: 1,
-  timeScale: DEFAULT_TIME_SCALE,
-  timeStart: 0
-};
-
-function basic(config: Partial<SpringConfig>): SpringConfig {
+function basic(config: Partial<SpringConfig> = {}): SpringConfig {
   return {
     ...DEFAULT_CONFIG,
     ...config
-  };
-}
-
-function decay(config: Partial<SpringConfig>): SpringConfig {
-  const resolved = {
-    ...DEFAULT_CONFIG,
-    ...config
-  };
-
-  const equilibrium =
-    resolved.position + findEquilibrium(resolved.velocity, resolved.angularFrequency);
-
-  return {
-    ...resolved,
-    dampingRatio: 1,
-    equilibrium
-  };
-}
-
-function staticConfig(equilibrium: number, config: Partial<SpringConfig> = {}): SpringConfig {
-  return {
-    ...DEFAULT_CONFIG,
-    ...config,
-    velocity: 0,
-    position: equilibrium,
-    equilibrium
   };
 }
 
@@ -100,6 +83,32 @@ function slow(config: Partial<SpringConfig> = {}): SpringConfig {
     angularFrequency: 0.5,
     dampingRatio: 1,
     ...config
+  };
+}
+
+function decay(config: Partial<SpringConfig>): SpringConfig {
+  const resolved = {
+    ...DEFAULT_CONFIG,
+    ...config
+  };
+
+  const equilibrium =
+    resolved.position + findEquilibrium(resolved.velocity, resolved.angularFrequency);
+
+  return {
+    ...resolved,
+    dampingRatio: 1,
+    equilibrium
+  };
+}
+
+function staticConfig(equilibrium: number, config: Partial<SpringConfig> = {}): SpringConfig {
+  return {
+    ...DEFAULT_CONFIG,
+    ...config,
+    velocity: 0,
+    position: equilibrium,
+    equilibrium
   };
 }
 
