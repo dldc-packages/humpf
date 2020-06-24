@@ -24,7 +24,7 @@ Humpf is different because it does not update a value but give you a function th
 ```ts
 import { Spring } from 'humpf';
 
-const spring = Spring.create();
+const spring = Spring();
 
 spring(0); // { pos: 0, vel: 0 }
 spring(100); //  { pos: 26.4241, vel: 36.7879  }
@@ -41,7 +41,7 @@ You can pass different options to the spring to change it's behavior:
 
 ```ts
 // all the options (see below for more details)
-Spring.create({
+Spring({
   position: 0, // initial velocity
   equilibrium: 100, // position to approach (aka "to")
   velocity: 0, // initial velocity
