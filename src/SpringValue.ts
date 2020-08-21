@@ -30,7 +30,7 @@ export function SpringValue(
     now = Date.now
   } = options;
 
-  let config = SpringConfig.basic({ timeStart: now(), ...initialConfig });
+  let config: SpringConfig = SpringConfig.basic({ timeStart: now(), ...initialConfig });
 
   let spring = Spring(config);
 
@@ -81,9 +81,10 @@ export function SpringValue(
     }
   }
 
-  function update(config: Partial<SpringConfig>) {
+  function update(configUpdate: Partial<SpringConfig>) {
     config = {
       ...config,
+      ...configUpdate,
       timeStart: now(),
       position: position(),
       velocity: velocity()
@@ -94,12 +95,13 @@ export function SpringValue(
     }
   }
 
-  function replace(config: Partial<SpringConfig>): void {
+  function replace(configReplace: Partial<SpringConfig>): void {
     config = {
+      ...config,
       timeStart: now(),
       position: position(),
       velocity: velocity(),
-      ...config
+      ...configReplace
     };
     spring = Spring(config);
     if (onSpringChange) {
