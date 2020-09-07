@@ -69,3 +69,35 @@ test('Decay', () => {
   expect(spring(500)).toEqual({ pos: 4.966310265004573, vel: 0.03368973499542732 });
   expect(spring(1000)).toEqual({ pos: 4.999773000351188, vel: 0.00022699964881242422 });
 });
+
+test('SpringConfig', () => {
+  expect(SpringConfig.basic()).toEqual({
+    angularFrequency: 1,
+    dampingRatio: 1,
+    equilibrium: 100,
+    position: 0,
+    timeScale: 0.01,
+    timeStart: 0,
+    velocity: 0
+  });
+  expect(SpringConfig.basic({ equilibrium: 200 })).toEqual({
+    angularFrequency: 1,
+    dampingRatio: 1,
+    equilibrium: 200,
+    position: 0,
+    timeScale: 0.01,
+    timeStart: 0,
+    velocity: 0
+  });
+  const staticConf = SpringConfig.static(200);
+  expect(staticConf.equilibrium).toBe(200);
+  expect(staticConf.position).toBe(staticConf.equilibrium);
+  expect(staticConf.velocity).toBe(0);
+});
+
+test('SpringConfig.static config cannot override equilibrium, position & velocity', () => {
+  const staticConf = SpringConfig.static(200, { equilibrium: 100, position: 100, velocity: 100 });
+  expect(staticConf.equilibrium).toBe(200);
+  expect(staticConf.position).toBe(200);
+  expect(staticConf.velocity).toBe(0);
+});
