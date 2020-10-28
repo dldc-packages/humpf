@@ -24,9 +24,9 @@ export function SpringValue(
   options: Partial<SpringValueOptions> = {}
 ): SpringValue {
   const {
-    onSpringChange,
     positionThreshold = 0.01,
     velocityThreshold = 0.001,
+    onSpringChange,
     now = Date.now
   } = options;
 
