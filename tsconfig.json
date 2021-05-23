@@ -19,6 +19,7 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "noEmit": true,
     "moduleResolution": "node",
     "baseUrl": "./",
     "esModuleInterop": true
