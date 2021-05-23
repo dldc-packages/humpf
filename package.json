@@ -34,7 +34,7 @@
   "scripts": {
     "build": "tsdx build",
     "codecov": "codecov",
-    "pub": "yarn build && np",
+    "pub": "yarn build && npx np",
     "start": "tsdx watch",
     "test": "tsdx test --coverage",
     "typecheck": "tsc",
