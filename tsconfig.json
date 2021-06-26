@@ -1,17 +1,15 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "es5",
-    "module": "ES2015",
+    "module": "ES2020",
     "lib": ["dom", "esnext"],
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
-    "rootDir": "./src",
-    "declarationDir": "dist",
+    "rootDir": ".",
+    "outDir": "dist",
     "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
@@ -19,10 +17,9 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noEmit": true,
     "moduleResolution": "node",
-    "baseUrl": "./",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "jsx": "react"
   },
-  "include": ["src", "types", "examples"]
+  "include": ["src", "tests"]
 }

@@ -1,4 +1,4 @@
-import { Spring, SpringConfig } from '../src';
+import { Spring, SpringConfig } from '../src/index.js';
 
 test('Create a spring does not throw', () => {
   expect(() => Spring()).not.toThrow();
@@ -78,7 +78,7 @@ test('SpringConfig', () => {
     position: 0,
     timeScale: 0.01,
     timeStart: 0,
-    velocity: 0
+    velocity: 0,
   });
   expect(SpringConfig.basic({ equilibrium: 200 })).toEqual({
     angularFrequency: 1,
@@ -87,7 +87,7 @@ test('SpringConfig', () => {
     position: 0,
     timeScale: 0.01,
     timeStart: 0,
-    velocity: 0
+    velocity: 0,
   });
   const staticConf = SpringConfig.static(200);
   expect(staticConf.equilibrium).toBe(200);

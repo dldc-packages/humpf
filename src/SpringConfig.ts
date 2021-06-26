@@ -24,7 +24,7 @@ const DEFAULT_CONFIG: SpringConfig = {
   // [advanced] multiply time by this value
   timeScale: 1 / 100,
   // time at which the annimation should start (after timeScale)
-  timeStart: 0
+  timeStart: 0,
 };
 
 export const SpringConfig = {
@@ -40,13 +40,13 @@ export const SpringConfig = {
   // utils
   findEquilibrium,
   angularFrequencyFromMass,
-  angularFrequencyFromSpringConstant
+  angularFrequencyFromSpringConstant,
 };
 
 function basic(config: Partial<SpringConfig> = {}): SpringConfig {
   return {
     ...DEFAULT_CONFIG,
-    ...config
+    ...config,
   };
 }
 
@@ -55,7 +55,7 @@ function gentle(config: Partial<SpringConfig> = {}): SpringConfig {
     ...DEFAULT_CONFIG,
     angularFrequency: 0.6,
     dampingRatio: 0.6,
-    ...config
+    ...config,
   };
 }
 
@@ -64,7 +64,7 @@ function wobbly(config: Partial<SpringConfig> = {}): SpringConfig {
     ...DEFAULT_CONFIG,
     angularFrequency: 0.8,
     dampingRatio: 0.4,
-    ...config
+    ...config,
   };
 }
 
@@ -73,7 +73,7 @@ function stiff(config: Partial<SpringConfig> = {}): SpringConfig {
     ...DEFAULT_CONFIG,
     angularFrequency: 1.1,
     dampingRatio: 0.7,
-    ...config
+    ...config,
   };
 }
 
@@ -82,23 +82,22 @@ function slow(config: Partial<SpringConfig> = {}): SpringConfig {
     ...DEFAULT_CONFIG,
     angularFrequency: 0.5,
     dampingRatio: 1,
-    ...config
+    ...config,
   };
 }
 
 function decay(config: Partial<SpringConfig>): SpringConfig {
   const resolved = {
     ...DEFAULT_CONFIG,
-    ...config
+    ...config,
   };
 
-  const equilibrium =
-    resolved.position + findEquilibrium(resolved.velocity, resolved.angularFrequency);
+  const equilibrium = resolved.position + findEquilibrium(resolved.velocity, resolved.angularFrequency);
 
   return {
     ...resolved,
     dampingRatio: 1,
-    equilibrium
+    equilibrium,
   };
 }
 
@@ -108,14 +107,14 @@ function staticConfig(equilibrium: number, config: Partial<SpringConfig> = {}): 
     ...config,
     velocity: 0,
     position: equilibrium,
-    equilibrium
+    equilibrium,
   };
 }
 
 /**
  * Find the equilibrium position for a Critically damped spring
  */
-function findEquilibrium(velocity: number, angularFrequency: number = 1) {
+function findEquilibrium(velocity: number, angularFrequency: number = 1): number {
   return velocity / angularFrequency;
 }
 

@@ -1,5 +1,5 @@
-import { SpringConfig } from './SpringConfig';
-import { Spring } from './Spring';
+import { SpringConfig } from './SpringConfig.js';
+import { Spring } from './Spring.js';
 
 export interface SpringValueOptions {
   velocityThreshold: number;
@@ -23,12 +23,7 @@ export function SpringValue(
   initialConfig: Partial<SpringConfig> = {},
   options: Partial<SpringValueOptions> = {}
 ): SpringValue {
-  const {
-    positionThreshold = 0.01,
-    velocityThreshold = 0.001,
-    onSpringChange,
-    now = Date.now
-  } = options;
+  const { positionThreshold = 0.01, velocityThreshold = 0.001, onSpringChange, now = Date.now } = options;
 
   let config: SpringConfig = SpringConfig.basic({ timeStart: now(), ...initialConfig });
 
@@ -41,7 +36,7 @@ export function SpringValue(
     getConfig,
     decay,
     update,
-    replace
+    replace,
   };
 
   function position(): number {
@@ -54,10 +49,7 @@ export function SpringValue(
 
   function stable(): boolean {
     const val = spring(now());
-    if (
-      Math.abs(val.vel) < velocityThreshold &&
-      Math.abs(val.pos - config.equilibrium) < positionThreshold
-    ) {
+    if (Math.abs(val.vel) < velocityThreshold && Math.abs(val.pos - config.equilibrium) < positionThreshold) {
       return true;
     }
     return false;
@@ -73,7 +65,7 @@ export function SpringValue(
       angularFrequency,
       timeStart: now(),
       position: position(),
-      velocity: velocity()
+      velocity: velocity(),
     });
     spring = Spring(config);
     if (onSpringChange) {
@@ -87,7 +79,7 @@ export function SpringValue(
       ...configUpdate,
       timeStart: now(),
       position: position(),
-      velocity: velocity()
+      velocity: velocity(),
     };
     spring = Spring(config);
     if (onSpringChange) {
@@ -101,7 +93,7 @@ export function SpringValue(
       timeStart: now(),
       position: position(),
       velocity: velocity(),
-      ...configReplace
+      ...configReplace,
     };
     spring = Spring(config);
     if (onSpringChange) {

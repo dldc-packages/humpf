@@ -1,5 +1,5 @@
-import { invariant, EPSILON, normalizeT } from './utils';
-import { SpringConfig } from './SpringConfig';
+import { invariant, EPSILON, normalizeT } from './utils.js';
+import { SpringConfig } from './SpringConfig.js';
 
 export interface SpringResult {
   pos: number;
@@ -9,15 +9,8 @@ export interface SpringResult {
 export type SpringFn = (t: number) => SpringResult;
 
 export function Spring(options: Partial<SpringConfig> = {}): SpringFn {
-  const {
-    position,
-    velocity,
-    equilibrium,
-    angularFrequency,
-    dampingRatio,
-    timeScale,
-    timeStart
-  } = SpringConfig.basic(options);
+  const { position, velocity, equilibrium, angularFrequency, dampingRatio, timeScale, timeStart } =
+    SpringConfig.basic(options);
 
   invariant(dampingRatio >= 0, 'Damping Ration must be >= 0');
   invariant(angularFrequency >= 0, 'Angular Frequency must be >= 0');
@@ -27,45 +20,22 @@ export function Spring(options: Partial<SpringConfig> = {}): SpringFn {
   if (angularFrequency <= EPSILON) {
     const identity = {
       vel: velocity,
-      pos: position
+      pos: position,
     };
     return () => identity;
   }
 
   if (dampingRatio > 1 + EPSILON) {
     // over-damped
-    return springOverDamped(
-      position,
-      velocity,
-      equilibrium,
-      angularFrequency,
-      dampingRatio,
-      timeScale,
-      timeStart
-    );
+    return springOverDamped(position, velocity, equilibrium, angularFrequency, dampingRatio, timeScale, timeStart);
   }
   if (dampingRatio < 1 - EPSILON) {
     // under-damped
-    return springUnderDamped(
-      position,
-      velocity,
-      equilibrium,
-      angularFrequency,
-      dampingRatio,
-      timeScale,
-      timeStart
-    );
+    return springUnderDamped(position, velocity, equilibrium, angularFrequency, dampingRatio, timeScale, timeStart);
   }
   // else
   // critically damped
-  return springCriticallyDamped(
-    position,
-    velocity,
-    equilibrium,
-    angularFrequency,
-    timeScale,
-    timeStart
-  );
+  return springCriticallyDamped(position, velocity, equilibrium, angularFrequency, timeScale, timeStart);
 }
 
 function springOverDamped(
@@ -98,7 +68,7 @@ function springOverDamped(
         velocity * (-e1_Over_TwoZb + e2_Over_TwoZb),
       vel:
         (position - equilibrium) * ((z1e1_Over_TwoZb - z2e2_Over_TwoZb + e2) * z2) +
-        velocity * (-z1e1_Over_TwoZb + z2e2_Over_TwoZb)
+        velocity * (-z1e1_Over_TwoZb + z2e2_Over_TwoZb),
     };
   };
 }
@@ -126,12 +96,10 @@ function springUnderDamped(
     const expOmegaZetaSin_Over_Alpha = expTerm * omegaZeta * sinTerm * invAlpha;
     return {
       pos:
-        equilibrium +
-        (position - equilibrium) * (expCos + expOmegaZetaSin_Over_Alpha) +
-        velocity * (expSin * invAlpha),
+        equilibrium + (position - equilibrium) * (expCos + expOmegaZetaSin_Over_Alpha) + velocity * (expSin * invAlpha),
       vel:
         (position - equilibrium) * (-expSin * alpha - omegaZeta * expOmegaZetaSin_Over_Alpha) +
-        velocity * (expCos - expOmegaZetaSin_Over_Alpha)
+        velocity * (expCos - expOmegaZetaSin_Over_Alpha),
     };
   };
 }
@@ -152,7 +120,7 @@ function springCriticallyDamped(
     const timeExpFreq = timeExp * angularFrequency;
     return {
       pos: oldPos * (timeExpFreq + expTerm) + velocity * timeExp + equilibrium,
-      vel: oldPos * (-angularFrequency * timeExpFreq) + velocity * (-timeExpFreq + expTerm)
+      vel: oldPos * (-angularFrequency * timeExpFreq) + velocity * (-timeExpFreq + expTerm),
     };
   };
 }

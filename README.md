@@ -49,7 +49,7 @@ Spring({
   dampingRatio: 1, // how much is it slowed down ?
   timeStart: 0, // time at which the annimation should start
   timeScale: 1 / 100, // [ADVANCED] change time scale
-})
+});
 ```
 
 ### `position` (default `0`)
@@ -76,12 +76,12 @@ The angular frequency of your spring define how fast it wants to move. If you ha
 
 The damping ratio define how much resistance (friction) is opposed to your spring.  
 If the damping ratio is less than `1` your spring will overshoot and bounce. If it's under `1` it will not.  
-If the damping ratio is `1` it will reach the equilibrium as fast as possible without bouncing.  
+If the damping ratio is `1` it will reach the equilibrium as fast as possible without bouncing.
 
 ### `timeStart` (default `0`)
 
 The time at which the spring should start.  
-Usually you want to pass the current time to start a spring "now".  
+Usually you want to pass the current time to start a spring "now".
 
 **Note**: spring does not work in reverse, so you you try to get a value for a time before `timeStart` it will return the initial state.
 
