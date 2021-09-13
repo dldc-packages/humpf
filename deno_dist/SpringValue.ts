@@ -1,5 +1,5 @@
-import { SpringConfig } from './SpringConfig';
-import { Spring } from './Spring';
+import { SpringConfig } from './SpringConfig.ts';
+import { Spring } from './Spring.ts';
 
 export interface SpringValueOptions {
   velocityThreshold: number;

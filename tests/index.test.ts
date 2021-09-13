@@ -1,4 +1,4 @@
-import { Spring, SpringConfig } from '../src/index.js';
+import { Spring, SpringConfig } from '../src/mod';
 
 test('Create a spring does not throw', () => {
   expect(() => Spring()).not.toThrow();

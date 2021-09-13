@@ -1,5 +1,5 @@
-import { invariant, EPSILON, normalizeT } from './utils';
-import { SpringConfig } from './SpringConfig';
+import { invariant, EPSILON, normalizeT } from './utils.ts';
+import { SpringConfig } from './SpringConfig.ts';
 
 export interface SpringResult {
   pos: number;
