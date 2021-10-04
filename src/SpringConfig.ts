@@ -1,3 +1,4 @@
+// This scale allow time to be expressed in milliseconds
 export const DEFAULT_TIME_SCALE = 1 / 100;
 
 export interface SpringConfig {
@@ -28,6 +29,7 @@ const DEFAULT_CONFIG: SpringConfig = {
 };
 
 export const SpringConfig = {
+  defaults,
   // presets
   basic,
   gentle,
@@ -43,50 +45,54 @@ export const SpringConfig = {
   angularFrequencyFromSpringConstant,
 };
 
-function basic(config: Partial<SpringConfig> = {}): SpringConfig {
+function defaults(config: Partial<SpringConfig> = {}): SpringConfig {
   return {
     ...DEFAULT_CONFIG,
     ...config,
   };
 }
 
-function gentle(config: Partial<SpringConfig> = {}): SpringConfig {
+function basic(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   return {
-    ...DEFAULT_CONFIG,
+    angularFrequency: 1,
+    dampingRatio: 1,
+    ...config,
+  };
+}
+
+function gentle(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
+  return {
     angularFrequency: 0.6,
     dampingRatio: 0.6,
     ...config,
   };
 }
 
-function wobbly(config: Partial<SpringConfig> = {}): SpringConfig {
+function wobbly(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   return {
-    ...DEFAULT_CONFIG,
     angularFrequency: 0.8,
     dampingRatio: 0.4,
     ...config,
   };
 }
 
-function stiff(config: Partial<SpringConfig> = {}): SpringConfig {
+function stiff(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   return {
-    ...DEFAULT_CONFIG,
     angularFrequency: 1.1,
     dampingRatio: 0.7,
     ...config,
   };
 }
 
-function slow(config: Partial<SpringConfig> = {}): SpringConfig {
+function slow(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   return {
-    ...DEFAULT_CONFIG,
     angularFrequency: 0.5,
     dampingRatio: 1,
     ...config,
   };
 }
 
-function decay(config: Partial<SpringConfig>): SpringConfig {
+function decay(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   const resolved = {
     ...DEFAULT_CONFIG,
     ...config,
@@ -95,15 +101,14 @@ function decay(config: Partial<SpringConfig>): SpringConfig {
   const equilibrium = resolved.position + findEquilibrium(resolved.velocity, resolved.angularFrequency);
 
   return {
-    ...resolved,
+    ...config,
     dampingRatio: 1,
     equilibrium,
   };
 }
 
-function staticConfig(equilibrium: number, config: Partial<SpringConfig> = {}): SpringConfig {
+function staticConfig(equilibrium: number, config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   return {
-    ...DEFAULT_CONFIG,
     ...config,
     velocity: 0,
     position: equilibrium,

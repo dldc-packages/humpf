@@ -1,5 +1,5 @@
 export { Spring } from './Spring';
 export type { SpringFn, SpringResult } from './Spring';
-export { SpringValue } from './SpringValue';
-export type { SpringValueOptions } from './SpringValue';
+export { SpringSequence } from './SpringSequence';
+export type { SpringSequenceFn } from './SpringSequence';
 export { SpringConfig } from './SpringConfig';

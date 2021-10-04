@@ -19,13 +19,10 @@ export interface SpringValue {
   replace: (config: Partial<SpringConfig>) => void;
 }
 
-export function SpringValue(
-  initialConfig: Partial<SpringConfig> = {},
-  options: Partial<SpringValueOptions> = {}
-): SpringValue {
+export function SpringValue(initialConfig: Partial<SpringConfig> = {}, options: Partial<SpringValueOptions> = {}): SpringValue {
   const { positionThreshold = 0.01, velocityThreshold = 0.001, onSpringChange, now = Date.now } = options;
 
-  let config: SpringConfig = SpringConfig.basic({ timeStart: now(), ...initialConfig });
+  let config: SpringConfig = SpringConfig.defaults({ timeStart: now(), ...initialConfig });
 
   let spring = Spring(config);
 
@@ -40,16 +37,16 @@ export function SpringValue(
   };
 
   function position(): number {
-    return spring(now()).pos;
+    return spring(now()).position;
   }
 
   function velocity(): number {
-    return spring(now()).vel;
+    return spring(now()).velocity;
   }
 
   function stable(): boolean {
     const val = spring(now());
-    if (Math.abs(val.vel) < velocityThreshold && Math.abs(val.pos - config.equilibrium) < positionThreshold) {
+    if (Math.abs(val.velocity) < velocityThreshold && Math.abs(val.position - config.equilibrium) < positionThreshold) {
       return true;
     }
     return false;
@@ -60,13 +57,15 @@ export function SpringValue(
   }
 
   function decay(angularFrequency: number = config.angularFrequency): void {
-    config = SpringConfig.decay({
-      ...config,
-      angularFrequency,
-      timeStart: now(),
-      position: position(),
-      velocity: velocity(),
-    });
+    config = SpringConfig.defaults(
+      SpringConfig.decay({
+        ...config,
+        angularFrequency,
+        timeStart: now(),
+        position: position(),
+        velocity: velocity(),
+      })
+    );
     spring = Spring(config);
     if (onSpringChange) {
       onSpringChange();
