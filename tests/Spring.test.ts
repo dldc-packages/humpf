@@ -7,9 +7,16 @@ test('Create a spring does not throw', () => {
 test('Basic spring is working', () => {
   const spring = Spring();
   expect(spring(0)).toEqual({ position: 0, velocity: 0 });
-  expect(spring(300)).toEqual({ position: 80.08517265285442, velocity: 14.936120510359183 });
-  expect(spring(500)).toEqual({ position: 95.95723180054873, velocity: 3.368973499542734 });
-  expect(spring(1000)).toEqual({ position: 99.95006007726127, velocity: 0.045399929762484845 });
+  // almost there after 1 time unit
+  expect(spring(1000)).toEqual({ position: 0.98638916015625, velocity: 0.01171875 });
+  expect(spring(2500)).toEqual({ position: 1, velocity: 0 });
+});
+
+test('When dampingRatio=0 it goes back to position after 1 unit of time', () => {
+  const spring = Spring({ timeScale: 1, position: 0, velocity: 0, equilibrium: 1, dampingRatio: 0 });
+  expect(spring(0)).toEqual({ position: 0, velocity: 0 });
+  expect(spring(1)).toEqual({ position: 0, velocity: -0 });
+  expect(spring(2)).toEqual({ position: 0, velocity: -0 });
 });
 
 test('Spring position is the same as spring().position', () => {
@@ -31,8 +38,10 @@ test('Spring velocity is the same as spring().velocity', () => {
 test('Equilibrium option', () => {
   const spring = Spring({ equilibrium: 200 });
   expect(spring(0)).toEqual({ position: 0, velocity: 0 });
-  expect(spring(500)).toEqual({ position: 191.91446360109745, velocity: 6.737946999085468 });
-  expect(spring(1000)).toEqual({ position: 199.90012015452254, velocity: 0.09079985952496969 });
+  expect(spring(500)).toEqual({ position: 164.20513916015625, velocity: 27.152099609375 });
+  expect(spring(1000)).toEqual({ position: 197.27978515625, velocity: 2.3466796875 });
+  expect(spring(2000)).toEqual({ position: 199.99053955078125, velocity: 0.0087890625 });
+  expect(spring(4000)).toEqual({ position: 200, velocity: 0 });
 });
 
 test('No angularFrequency is static', () => {
@@ -43,51 +52,53 @@ test('No angularFrequency is static', () => {
 });
 
 test('Overdamped spring', () => {
-  const spring = Spring({ dampingRatio: 2 });
-  expect(spring(0)).toEqual({ position: 0, velocity: -5.949667257334986e-15 });
-  expect(spring(500)).toEqual({ position: 71.78288260248469, velocity: 7.560753608532153 });
-  expect(spring(1000)).toEqual({ position: 92.60959280903771, velocity: 1.980253638555507 });
-  expect(spring(2000)).toEqual({ position: 99.49303286024785, velocity: 0.13584143568570428 });
+  const spring = Spring({ dampingRatio: 2, equilibrium: 100 });
+  expect(spring(0)).toEqual({ position: 0, velocity: -0 });
+  expect(spring(500)).toEqual({ position: 53.57275390625, velocity: 12.43994140625 });
+  expect(spring(1000)).toEqual({ position: 79.99261474609375, velocity: 5.3609619140625 });
+  expect(spring(2000)).toEqual({ position: 96.284423828125, velocity: 0.99560546875 });
   expect(spring(1500).position).toEqual(spring.position(1500));
   expect(spring(1500).velocity).toEqual(spring.velocity(1500));
 });
 
 test('Underdamped spring', () => {
-  const spring = Spring({ dampingRatio: 0.5 });
+  const spring = Spring({ dampingRatio: 0.5, equilibrium: 100 });
   expect(spring(0)).toEqual({ position: 0, velocity: 0 });
-  expect(spring(200)).toEqual({ position: 84.94256348541123, velocity: 41.92796296663318 });
-  expect(spring(300)).toEqual({ position: 112.43547674084118, velocity: 13.324264401804115 });
-  expect(spring(400)).toEqual({ position: 115.31227684140492, velocity: -4.952987974191479 });
-  expect(spring(500)).toEqual({ position: 107.45905665950333, velocity: -8.794242073251285 });
-  expect(spring(1000)).toEqual({ position: 100.21701167393262, velocity: 0.5385480616059573 });
-  expect(spring(2000)).toEqual({ position: 100.00242939948036, velocity: -0.005237764473440873 });
+  expect(spring(200)).toEqual({ position: 47.96124267578125, velocity: 54.56878662109375 });
+  expect(spring(300)).toEqual({ position: 79.9453125, velocity: 44.9088134765625 });
+  expect(spring(400)).toEqual({ position: 102.69720458984375, velocity: 27.016357421875 });
+  expect(spring(500)).toEqual({ position: 114.0699462890625, velocity: 9.80743408203125 });
+  expect(spring(1000)).toEqual({ position: 98.98223876953125, velocity: -3.7216796875 });
+  expect(spring(2000)).toEqual({ position: 100.128173828125, velocity: -0.2142333984375 });
   expect(spring(1500).position).toEqual(spring.position(1500));
   expect(spring(1500).velocity).toEqual(spring.velocity(1500));
 });
 
 test('TimeStart option', () => {
-  const spring = Spring({ timeStart: 1000 });
+  const spring = Spring({ timeStart: 1000, equilibrium: 100 });
   expect(spring(0)).toEqual({ position: 0, velocity: 0 });
   expect(spring(500)).toEqual({ position: 0, velocity: 0 });
   expect(spring(1000)).toEqual({ position: 0, velocity: 0 });
-  expect(spring(1500)).toEqual({ position: 95.95723180054873, velocity: 3.368973499542734 });
-  expect(spring(2000)).toEqual({ position: 99.95006007726127, velocity: 0.045399929762484845 });
+  expect(spring(1250)).toEqual({ position: 46.55841064453125, velocity: 32.65362548828125 });
+  expect(spring(1500)).toEqual({ position: 82.1025390625, velocity: 13.5760498046875 });
+  expect(spring(2000)).toEqual({ position: 98.639892578125, velocity: 1.17333984375 });
 });
 
 test('Negative timeStart option', () => {
-  const spring = Spring({ timeStart: -500 });
+  const spring = Spring({ timeStart: -500, equilibrium: 100 });
   expect(spring(-500)).toEqual({ position: 0, velocity: 0 });
-  expect(spring(-200)).toEqual({ position: 80.08517265285442, velocity: 14.936120510359183 });
-  expect(spring(0)).toEqual({ position: 95.95723180054873, velocity: 3.368973499542734 });
-  expect(spring(500)).toEqual({ position: 99.95006007726127, velocity: 0.045399929762484845 });
+  expect(spring(-200)).toEqual({ position: 56.196044921875, velocity: 28.620361328125 });
+  expect(spring(0)).toEqual({ position: 82.1025390625, velocity: 13.5760498046875 });
+  expect(spring(500)).toEqual({ position: 98.639892578125, velocity: 1.17333984375 });
 });
 
 test('Decay', () => {
   const spring = Spring(SpringConfig.decay({ velocity: 5 }));
   expect(spring(0)).toEqual({ position: 0, velocity: 5 });
-  expect(spring(250)).toEqual({ position: 4.589575006880506, velocity: 0.4104249931194941 });
-  expect(spring(500)).toEqual({ position: 4.966310265004573, velocity: 0.03368973499542732 });
-  expect(spring(1000)).toEqual({ position: 4.999773000351188, velocity: 0.00022699964881242422 });
+  expect(spring(250)).toEqual({ position: 3.96063232421875, velocity: 1.03936767578125 });
+  expect(spring(500)).toEqual({ position: 4.783935546875, velocity: 0.216064453125 });
+  expect(spring(1000)).toEqual({ position: 4.99066162109375, velocity: 0.00933837890625 });
+  expect(spring(2000)).toEqual({ position: 5, velocity: 0 });
 });
 
 test('Identity spring', () => {

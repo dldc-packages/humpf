@@ -1,7 +1,7 @@
 import { SpringConfig } from '../src/mod';
 
-test('SpringConfig.static config cannot override equilibrium, position & velocity', () => {
-  const staticConf = SpringConfig.static(200, { equilibrium: 100, position: 100, velocity: 100 });
+test('SpringConfig.stable config cannot override equilibrium, position & velocity', () => {
+  const staticConf = SpringConfig.stable(200, { equilibrium: 100, position: 100, velocity: 100 });
   expect(staticConf.equilibrium).toBe(200);
   expect(staticConf.position).toBe(200);
   expect(staticConf.velocity).toBe(0);
@@ -12,8 +12,8 @@ test('SpringConfig.basic', () => {
   expect(SpringConfig.basic({ equilibrium: 200 })).toEqual({ angularFrequency: 1, dampingRatio: 1, equilibrium: 200 });
 });
 
-test('SpringConfig.static', () => {
-  const staticConf = SpringConfig.static(200);
+test('SpringConfig.stable', () => {
+  const staticConf = SpringConfig.stable(200);
   expect(staticConf.equilibrium).toBe(200);
   expect(staticConf.position).toBe(staticConf.equilibrium);
   expect(staticConf.velocity).toBe(0);
@@ -28,29 +28,38 @@ test('SpringConfig.defaults', () => {
   expect(SpringConfig.defaults({})).toEqual({
     angularFrequency: 1,
     dampingRatio: 1,
-    equilibrium: 100,
+    equilibrium: 1,
     position: 0,
-    timeScale: 0.01,
     timeStart: 0,
     velocity: 0,
+    timeScale: 1000,
+    positionPrecision: 0.00006103515625,
+    velocityPrecision: 0.00006103515625,
+    dampingRatioPrecision: 0.00006103515625,
   });
   expect(SpringConfig.defaults()).toEqual({
     angularFrequency: 1,
     dampingRatio: 1,
-    equilibrium: 100,
+    equilibrium: 1,
     position: 0,
-    timeScale: 0.01,
     timeStart: 0,
     velocity: 0,
+    timeScale: 1000,
+    positionPrecision: 0.00006103515625,
+    velocityPrecision: 0.00006103515625,
+    dampingRatioPrecision: 0.00006103515625,
   });
   expect(SpringConfig.defaults({ position: 200 })).toEqual({
     angularFrequency: 1,
     dampingRatio: 1,
-    equilibrium: 100,
+    equilibrium: 1,
     position: 200,
-    timeScale: 0.01,
     timeStart: 0,
     velocity: 0,
+    timeScale: 1000,
+    positionPrecision: 0.00006103515625,
+    velocityPrecision: 0.00006103515625,
+    dampingRatioPrecision: 0.00006103515625,
   });
 });
 

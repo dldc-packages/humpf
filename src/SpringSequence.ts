@@ -42,7 +42,7 @@ export class SpringSequence {
   private readonly findSpringAt = (t: number): SpringSequenceFn => {
     const step = this.findMaybeStepAt(t);
     if (step) {
-      return stepSprinOrThrow(step);
+      return stepSpringOrThrow(step);
     }
     return this.initialSpring;
   };
@@ -78,7 +78,7 @@ export class SpringSequence {
     if (indexResolved >= this.steps.length) {
       return;
     }
-    let prev: SpringSequenceFn = indexResolved === 0 ? this.initialSpring : stepSprinOrThrow(this.steps[index - 1]);
+    let prev: SpringSequenceFn = indexResolved === 0 ? this.initialSpring : stepSpringOrThrow(this.steps[index - 1]);
     for (let i = index; i < this.steps.length; i++) {
       const step = this.steps[i];
       const spring = this.createSpring(step.time, prev(step.time), step.config);
@@ -118,6 +118,10 @@ export class SpringSequence {
     );
   };
 
+  /**
+   * Change the initial state of the spring.
+   * This will update all internal springs.
+   */
   public readonly setInitial = (initial: Partial<SpringResult>): this => {
     const current = this.initialSpring(0); // could fetch any time since initialSpring return the same value
     this.initialSpring = createInitialSpring({ position: initial.position ?? current.position, velocity: initial.velocity ?? current.velocity });
@@ -125,12 +129,18 @@ export class SpringSequence {
     return this;
   };
 
+  /**
+   * Change the default config. This will update all internal springs.
+   */
   public readonly setDefaultConfig = (config: Partial<SpringConfig>): this => {
     this.defaultConfig = config;
     this.updateFromIndex(0);
     return this;
   };
 
+  /**
+   * Change timescale
+   */
   public readonly setTimeScale = (timeScale: number): this => {
     this.timeScale = timeScale;
     this.updateFromIndex(0);
@@ -204,7 +214,7 @@ export class SpringSequence {
       return this;
     }
     const stepIndex = this.steps.indexOf(step);
-    const stateAtTime = stepSprinOrThrow(step)(time);
+    const stateAtTime = stepSpringOrThrow(step)(time);
     this.steps.splice(0, stepIndex + 1);
     // this will update steps
     this.setInitial(stateAtTime);
@@ -227,7 +237,7 @@ function resolveConfig(conf: number | Partial<SpringConfig>): Partial<SpringConf
   return typeof conf === 'number' ? { equilibrium: conf } : conf;
 }
 
-function stepSprinOrThrow(step: SpringSequenceStep): SpringSequenceFn {
+function stepSpringOrThrow(step: SpringSequenceStep): SpringSequenceFn {
   if (step.spring === null) {
     throw new Error(`Internal Error: steo.spring is null.`);
   }
