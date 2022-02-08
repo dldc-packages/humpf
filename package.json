@@ -25,13 +25,13 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/mod.mjs",
+      "require": "./dist/mod.js"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/mod.js",
+  "module": "./dist/mod.mjs",
+  "types": "./dist/mod.d.ts",
   "files": [
     "dist"
   ],
