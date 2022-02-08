@@ -44,6 +44,7 @@
     "test": "yarn run lint && jest --coverage",
     "test:run": "jest",
     "test:watch": "jest --watch",
+    "test:cov:watch": "jest --coverage --watch --all",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },

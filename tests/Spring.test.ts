@@ -1,4 +1,5 @@
 import { Spring, SpringConfig } from '../src/mod';
+import { asciiGraph } from './utils';
 
 test('Create a spring does not throw', () => {
   expect(() => Spring()).not.toThrow();
@@ -10,6 +11,13 @@ test('Basic spring is working', () => {
   // almost there after 1 time unit
   expect(spring(1000)).toEqual({ position: 0.98638916015625, velocity: 0.01171875 });
   expect(spring(2500)).toEqual({ position: 1, velocity: 0 });
+  expect(asciiGraph(spring.position, { width: 100, height: 5, xAxis: [0, 3000], yAxis: [0, 1.2] })).toMatchInlineSnapshot(`
+    "__________________██████████████████████████████████████████████████████████████████████████████████
+    ___________███████__________________________________________________________________________________
+    _______████_________________________________________________________________________________________
+    ____███_____________________________________________________________________________________________
+    ████________________________________________________________________________________________________"
+  `);
 });
 
 test('When dampingRatio=0 it goes back to position after 1 unit of time', () => {
@@ -17,6 +25,13 @@ test('When dampingRatio=0 it goes back to position after 1 unit of time', () => 
   expect(spring(0)).toEqual({ position: 0, velocity: 0 });
   expect(spring(1)).toEqual({ position: 0, velocity: -0 });
   expect(spring(2)).toEqual({ position: 0, velocity: -0 });
+  expect(asciiGraph(spring.position, { width: 100, height: 5, xAxis: [0, 3], yAxis: [0, 2.2] })).toMatchInlineSnapshot(`
+    "____________████__████_______________________████___████_______________________████__████___________
+    _________███__________███__________________██___________██__________________███__________███________
+    _______██________________██_____________███_______________███_____________██________________██______
+    ____███____________________███_______███_____________________███_______███____________________███___
+    ████__________________________███████___________________________███████__________________________███"
+  `);
 });
 
 test('Spring position is the same as spring().position', () => {

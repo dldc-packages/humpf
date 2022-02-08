@@ -1,5 +1,6 @@
 import { Spring, SpringFn, SpringResult } from './Spring';
 import { DEFAULT_TIME_SCALE, SpringConfig } from './SpringConfig';
+import { makeSpringFn } from './utils';
 
 type SpringSequenceStep = { time: number; config: Partial<SpringConfig>; spring: SpringFn | null };
 
@@ -33,10 +34,12 @@ export class SpringSequence {
     this.timeScale = timeScale;
     this.defaultConfig = defaultConfig;
     this.initialSpring = createInitialSpring({ position: initial.position ?? 0, velocity: initial.velocity ?? 0 });
-    this.spring = Object.assign((t: number): SpringResult => this.findSpringAt(t)(t), {
-      position: (t: number) => this.findSpringAt(t).position(t),
-      velocity: (t: number) => this.findSpringAt(t).velocity(t),
-    });
+    this.spring = makeSpringFn(
+      defaultConfig,
+      (t) => this.findSpringAt(t)(t),
+      (t) => this.findSpringAt(t).position(t),
+      (t) => this.findSpringAt(t).velocity(t)
+    );
   }
 
   private readonly findSpringAt = (t: number): SpringSequenceFn => {
