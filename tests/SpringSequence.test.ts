@@ -1,5 +1,5 @@
 import { SpringSequence } from '../src/mod';
-import { asciiGraph } from './utils';
+import { canvasImage } from './utils';
 
 test('Empty SpringSequence', () => {
   const seq = SpringSequence.create();
@@ -28,18 +28,21 @@ test('Create with initial', () => {
   });
 });
 
-test('SpringSequence insertAt', () => {
+test('SpringSequence insertAt', async () => {
   const seq = SpringSequence.create().insertAt(200, 100).insertAt(1000, 300).insertAt(2000, 0);
-  expect(asciiGraph(seq.spring.position, { width: 100, height: 10, xAxis: [0, 4000], yAxis: [0, 350] })).toMatchInlineSnapshot(`
-    "____________________________________________________________________________________________________
-    ______________________________________███████████████_______________________________________________
-    __________________________________████_______________█______________________________________________
-    ________________________________██____________________█_____________________________________________
-    ______________________________██_______________________██___________________________________________
-    ____________________________██___________________________█__________________________________________
-    ____________________████████______________________________██________________________________________
-    _____________███████________________________________________███_____________________________________
-    _________████__________________________________________________██████_______________________________
-    █████████____________________________________________________________███████████████████████████████"
-  `);
+  expect(
+    await canvasImage(seq.spring, 'sequence-insertAt', { timeAxis: [0, 4000], position: { min: 0, max: 350 }, velocity: { min: -120, max: 120 } })
+  ).toMatchSnapshot();
+});
+
+test('SpringSequence replaceTail', async () => {
+  const seq = SpringSequence.create().insertAt(200, 100).insertAt(1000, 300).insertAt(2000, 0).replaceTail(2300, 150);
+  expect(
+    await canvasImage(seq.spring, 'sequence-replaceTail', {
+      timeAxis: [0, 4000],
+      position: { min: 0, max: 350 },
+      velocity: { min: -120, max: 120 },
+      events: [{ time: 2300 }],
+    })
+  ).toMatchSnapshot();
 });

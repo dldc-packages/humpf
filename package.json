@@ -55,6 +55,7 @@
     "@types/jest": "^27.4.0",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
+    "canvas": "^2.9.1",
     "denoify": "^0.10.6",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
