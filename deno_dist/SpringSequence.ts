@@ -1,5 +1,6 @@
 import { Spring, SpringFn, SpringResult } from './Spring.ts';
 import { DEFAULT_TIME_SCALE, SpringConfig } from './SpringConfig.ts';
+import { makeSpringFn } from './utils.ts';
 
 type SpringSequenceStep = { time: number; config: Partial<SpringConfig>; spring: SpringFn | null };
 
@@ -33,16 +34,18 @@ export class SpringSequence {
     this.timeScale = timeScale;
     this.defaultConfig = defaultConfig;
     this.initialSpring = createInitialSpring({ position: initial.position ?? 0, velocity: initial.velocity ?? 0 });
-    this.spring = Object.assign((t: number): SpringResult => this.findSpringAt(t)(t), {
-      position: (t: number) => this.findSpringAt(t).position(t),
-      velocity: (t: number) => this.findSpringAt(t).velocity(t),
-    });
+    this.spring = makeSpringFn(
+      defaultConfig,
+      (t) => this.findSpringAt(t)(t),
+      (t) => this.findSpringAt(t).position(t),
+      (t) => this.findSpringAt(t).velocity(t)
+    );
   }
 
   private readonly findSpringAt = (t: number): SpringSequenceFn => {
     const step = this.findMaybeStepAt(t);
     if (step) {
-      return stepSprinOrThrow(step);
+      return stepSpringOrThrow(step);
     }
     return this.initialSpring;
   };
@@ -78,7 +81,7 @@ export class SpringSequence {
     if (indexResolved >= this.steps.length) {
       return;
     }
-    let prev: SpringSequenceFn = indexResolved === 0 ? this.initialSpring : stepSprinOrThrow(this.steps[index - 1]);
+    let prev: SpringSequenceFn = indexResolved === 0 ? this.initialSpring : stepSpringOrThrow(this.steps[index - 1]);
     for (let i = index; i < this.steps.length; i++) {
       const step = this.steps[i];
       const spring = this.createSpring(step.time, prev(step.time), step.config);
@@ -118,6 +121,10 @@ export class SpringSequence {
     );
   };
 
+  /**
+   * Change the initial state of the spring.
+   * This will update all internal springs.
+   */
   public readonly setInitial = (initial: Partial<SpringResult>): this => {
     const current = this.initialSpring(0); // could fetch any time since initialSpring return the same value
     this.initialSpring = createInitialSpring({ position: initial.position ?? current.position, velocity: initial.velocity ?? current.velocity });
@@ -125,12 +132,18 @@ export class SpringSequence {
     return this;
   };
 
+  /**
+   * Change the default config. This will update all internal springs.
+   */
   public readonly setDefaultConfig = (config: Partial<SpringConfig>): this => {
     this.defaultConfig = config;
     this.updateFromIndex(0);
     return this;
   };
 
+  /**
+   * Change timescale
+   */
   public readonly setTimeScale = (timeScale: number): this => {
     this.timeScale = timeScale;
     this.updateFromIndex(0);
@@ -168,7 +181,7 @@ export class SpringSequence {
   public readonly replaceTail = (time: number, config: number | Partial<SpringConfig>): this => {
     const step = this.findMaybeStepAt(time);
     const stepIndex = step === null ? 0 : this.steps.indexOf(step);
-    this.steps.splice(stepIndex, this.steps.length - stepIndex, { time, config: resolveConfig(config), spring: null });
+    this.steps.splice(stepIndex + 1, this.steps.length - stepIndex, { time, config: resolveConfig(config), spring: null });
     this.updateFromIndex(stepIndex);
     return this;
   };
@@ -204,7 +217,7 @@ export class SpringSequence {
       return this;
     }
     const stepIndex = this.steps.indexOf(step);
-    const stateAtTime = stepSprinOrThrow(step)(time);
+    const stateAtTime = stepSpringOrThrow(step)(time);
     this.steps.splice(0, stepIndex + 1);
     // this will update steps
     this.setInitial(stateAtTime);
@@ -227,7 +240,7 @@ function resolveConfig(conf: number | Partial<SpringConfig>): Partial<SpringConf
   return typeof conf === 'number' ? { equilibrium: conf } : conf;
 }
 
-function stepSprinOrThrow(step: SpringSequenceStep): SpringSequenceFn {
+function stepSpringOrThrow(step: SpringSequenceStep): SpringSequenceFn {
   if (step.spring === null) {
     throw new Error(`Internal Error: steo.spring is null.`);
   }

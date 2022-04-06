@@ -1,31 +1,41 @@
-// This scale allow time to be expressed in milliseconds
-export const DEFAULT_TIME_SCALE = 1 / 100;
+// Default to 1000 so time is in milliseconds
+export const DEFAULT_TIME_SCALE = 1000;
+
+// This value ensure a valid binary rounding
+export const DEFAULT_PRECISION = 1 / (1 << 14);
 
 export interface SpringConfig {
+  // initial position
   position: number;
+  // initial velocity
   velocity: number;
+  // position to approach
   equilibrium: number;
+  // angular frequency of motion
   angularFrequency: number;
+  // damping ratio of motion
   dampingRatio: number;
+  // The default timeScale is 1000 so that 1 time unit is 1ms
+  // Set timeScale to 1 to make 1 unit 1s
   timeScale: number;
+  // time at which the animation should start
   timeStart: number;
+  positionPrecision: number;
+  velocityPrecision: number;
+  dampingRatioPrecision: number;
 }
 
 const DEFAULT_CONFIG: SpringConfig = {
-  // initial position
   position: 0,
-  // initial velocity
   velocity: 0,
-  // position to approach
-  equilibrium: 100,
-  // angular frequency of motion
+  equilibrium: 1,
   angularFrequency: 1,
-  // damping ratio of motion
   dampingRatio: 1,
-  // [advanced] multiply time by this value
-  timeScale: 1 / 100,
-  // time at which the annimation should start (after timeScale)
+  timeScale: DEFAULT_TIME_SCALE,
   timeStart: 0,
+  positionPrecision: DEFAULT_PRECISION,
+  velocityPrecision: DEFAULT_PRECISION,
+  dampingRatioPrecision: DEFAULT_PRECISION,
 };
 
 export const SpringConfig = {
@@ -38,7 +48,7 @@ export const SpringConfig = {
   slow,
   // special
   decay,
-  static: staticConfig,
+  stable,
   // utils
   findEquilibrium,
   angularFrequencyFromMass,
@@ -107,7 +117,7 @@ function decay(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   };
 }
 
-function staticConfig(equilibrium: number, config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
+function stable(equilibrium: number, config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   return {
     ...config,
     velocity: 0,
