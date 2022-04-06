@@ -181,7 +181,7 @@ export class SpringSequence {
   public readonly replaceTail = (time: number, config: number | Partial<SpringConfig>): this => {
     const step = this.findMaybeStepAt(time);
     const stepIndex = step === null ? 0 : this.steps.indexOf(step);
-    this.steps.splice(stepIndex, this.steps.length - stepIndex, { time, config: resolveConfig(config), spring: null });
+    this.steps.splice(stepIndex + 1, this.steps.length - stepIndex, { time, config: resolveConfig(config), spring: null });
     this.updateFromIndex(stepIndex);
     return this;
   };
