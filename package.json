@@ -48,25 +48,22 @@
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },
-  "dependencies": {
-    "tslib": "^2.3.1"
-  },
   "devDependencies": {
-    "@types/jest": "^27.4.0",
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
+    "@types/jest": "^27.5.0",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
     "canvas": "^2.9.1",
-    "denoify": "^0.10.6",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "jest": "^27.5.1",
-    "np": "^7.6.0",
-    "prettier": "^2.5.1",
+    "denoify": "^0.11.0",
+    "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "jest": "^28.1.0",
+    "np": "^7.6.1",
+    "prettier": "^2.6.2",
     "rimraf": "^3.0.2",
-    "ts-jest": "^27.1.3",
+    "ts-jest": "^28.0.2",
     "tslib": "^2.3.1",
-    "tsup": "^5.11.13",
-    "typescript": "^4.5.5"
+    "tsup": "^5.12.7",
+    "typescript": "^4.6.4"
   },
   "publishConfig": {
     "access": "public",
