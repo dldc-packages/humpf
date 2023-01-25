@@ -1,10 +1,4 @@
-// Default to 1000 so time is in milliseconds
-export const DEFAULT_TIME_SCALE = 1000;
-
-// This value ensure a valid binary rounding
-export const DEFAULT_PRECISION = 1 / (1 << 14);
-
-export interface SpringConfig {
+export interface ISpringConfig {
   // initial position
   position: number;
   // initial velocity
@@ -25,7 +19,13 @@ export interface SpringConfig {
   dampingRatioPrecision: number;
 }
 
-const DEFAULT_CONFIG: SpringConfig = {
+// Default to 1000 so time is in milliseconds
+export const DEFAULT_TIME_SCALE = 1000;
+
+// This value ensure a valid binary rounding
+export const DEFAULT_PRECISION = 1 / (1 << 14);
+
+export const DEFAULT_CONFIG: ISpringConfig = {
   position: 0,
   velocity: 0,
   equilibrium: 1,
@@ -55,14 +55,14 @@ export const SpringConfig = {
   angularFrequencyFromSpringConstant,
 };
 
-function defaults(config: Partial<SpringConfig> = {}): SpringConfig {
+function defaults(config: Partial<ISpringConfig> = {}): ISpringConfig {
   return {
     ...DEFAULT_CONFIG,
     ...config,
   };
 }
 
-function basic(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
+function basic(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   return {
     angularFrequency: 1,
     dampingRatio: 1,
@@ -70,7 +70,7 @@ function basic(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   };
 }
 
-function gentle(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
+function gentle(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   return {
     angularFrequency: 0.6,
     dampingRatio: 0.6,
@@ -78,7 +78,7 @@ function gentle(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   };
 }
 
-function wobbly(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
+function wobbly(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   return {
     angularFrequency: 0.8,
     dampingRatio: 0.4,
@@ -86,7 +86,7 @@ function wobbly(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   };
 }
 
-function stiff(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
+function stiff(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   return {
     angularFrequency: 1.1,
     dampingRatio: 0.7,
@@ -94,7 +94,7 @@ function stiff(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   };
 }
 
-function slow(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
+function slow(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   return {
     angularFrequency: 0.5,
     dampingRatio: 1,
@@ -102,7 +102,7 @@ function slow(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   };
 }
 
-function decay(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
+function decay(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   const resolved = {
     ...DEFAULT_CONFIG,
     ...config,
@@ -117,7 +117,7 @@ function decay(config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
   };
 }
 
-function stable(equilibrium: number, config: Partial<SpringConfig> = {}): Partial<SpringConfig> {
+function stable(equilibrium: number, config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   return {
     ...config,
     velocity: 0,

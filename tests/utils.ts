@@ -1,5 +1,5 @@
 import { createCanvas, CanvasRenderingContext2D } from 'canvas';
-import { SpringSequenceFn } from '../src/mod';
+import { SpringFn } from '../src/mod';
 import { createWriteStream } from 'fs';
 import { resolve } from 'path';
 
@@ -50,7 +50,7 @@ export type SpringExport = Array<[time: number, pos: number, vel: number]>;
  * and returns data
  */
 export async function canvasImage(
-  spring: SpringSequenceFn,
+  spring: SpringFn,
   fileName: string,
   { width = 600, timeAxis, position, velocity, events }: CanvasImageConfig
 ): Promise<SpringExport> {

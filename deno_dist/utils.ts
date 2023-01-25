@@ -1,5 +1,5 @@
 import { SpringFn, SpringResult } from './Spring.ts';
-import { SpringConfig } from './SpringConfig.ts';
+import { ISpringConfig } from './SpringConfig.ts';
 
 /**
  * This values is chosen to make a spring with dampingRatio of 0
@@ -21,14 +21,19 @@ export function normalizeT(t: number, timeScale: number, timeStart: number): num
 }
 
 export function makeSpringFn(
-  config: Partial<SpringConfig>,
+  config: Partial<ISpringConfig>,
   main: (t: number) => SpringResult,
   position: (t: number) => number,
-  velocity: (t: number) => number
+  velocity: (t: number) => number,
+  stable: (t: number) => boolean
 ): SpringFn {
-  return Object.assign(main, { position, velocity, config });
+  return Object.assign(main, { position, velocity, stable, config });
 }
 
 export function toPrecision(num: number, precision: number): number {
   return Math.round(num / precision) * precision;
+}
+
+export function isStable(res: SpringResult, conf: ISpringConfig): boolean {
+  return Math.abs(res.position - conf.equilibrium) <= conf.positionPrecision && Math.abs(res.velocity) <= conf.velocityPrecision;
 }

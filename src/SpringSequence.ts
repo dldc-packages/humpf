@@ -1,255 +1,284 @@
 import { Spring, SpringFn, SpringResult } from './Spring';
-import { DEFAULT_TIME_SCALE, SpringConfig } from './SpringConfig';
+import { DEFAULT_TIME_SCALE, ISpringConfig, SpringConfig } from './SpringConfig';
 import { makeSpringFn } from './utils';
 
-type SpringSequenceStep = { time: number; config: Partial<SpringConfig>; spring: SpringFn | null };
+type SpringSequenceStep = { time: number; config: Partial<ISpringConfig>; spring: SpringFn | null };
 
-export interface SpringSequenceFn {
-  (t: number): SpringResult;
-  readonly position: (t: number) => number;
-  readonly velocity: (t: number) => number;
-}
-
-type SpringSequenceConfig = {
+export interface SpringSequenceConfig {
   timeScale?: number;
-  defaultConfig?: Partial<SpringConfig>;
-  initial?: Partial<SpringResult>;
-};
-
-export class SpringSequence {
-  public static create(options: SpringSequenceConfig = {}): SpringSequence {
-    return new SpringSequence([], options);
-  }
-
-  private readonly steps: Array<SpringSequenceStep> = [];
-  private timeScale: number;
-  private defaultConfig: Partial<SpringConfig>;
-  // spring that return initial state at any time
-  private initialSpring: SpringSequenceFn;
-
-  public readonly spring: SpringSequenceFn;
-
-  private constructor(steps: Array<SpringSequenceStep>, { timeScale = DEFAULT_TIME_SCALE, defaultConfig = {}, initial = {} }: SpringSequenceConfig) {
-    this.steps = steps;
-    this.timeScale = timeScale;
-    this.defaultConfig = defaultConfig;
-    this.initialSpring = createInitialSpring({ position: initial.position ?? 0, velocity: initial.velocity ?? 0 });
-    this.spring = makeSpringFn(
-      defaultConfig,
-      (t) => this.findSpringAt(t)(t),
-      (t) => this.findSpringAt(t).position(t),
-      (t) => this.findSpringAt(t).velocity(t)
-    );
-  }
-
-  private readonly findSpringAt = (t: number): SpringSequenceFn => {
-    const step = this.findMaybeStepAt(t);
-    if (step) {
-      return stepSpringOrThrow(step);
-    }
-    return this.initialSpring;
-  };
-
-  /**
-   * Return the first step where t is >= to step.time
-   * Return null if t is before first step or no steps
-   */
-  private readonly findMaybeStepAt = (t: number): SpringSequenceStep | null => {
-    if (this.steps.length === 0) {
-      return null;
-    }
-    if (t < this.steps[0].time) {
-      // t is before first time
-      return null;
-    }
-    let prev: null | SpringSequenceStep = null;
-    for (let i = 0; i < this.steps.length; i++) {
-      const step = this.steps[i];
-      if (t < step.time) {
-        break;
-      }
-      prev = step;
-    }
-    return prev;
-  };
-
-  /**
-   * Update each step starting at the index
-   */
-  private readonly updateFromIndex = (index: number): void => {
-    const indexResolved = index < 0 ? 0 : index;
-    if (indexResolved >= this.steps.length) {
-      return;
-    }
-    let prev: SpringSequenceFn = indexResolved === 0 ? this.initialSpring : stepSpringOrThrow(this.steps[index - 1]);
-    for (let i = index; i < this.steps.length; i++) {
-      const step = this.steps[i];
-      const spring = this.createSpring(step.time, prev(step.time), step.config);
-      step.spring = spring;
-      prev = spring;
-    }
-  };
-
-  /**
-   * Create a spring at a certain time using defaultConfig
-   */
-  private readonly createSpring = (time: number, current: SpringResult | null, config: number | Partial<SpringConfig>): SpringFn => {
-    const resolved = {
-      ...this.defaultConfig,
-      ...resolveConfig(config),
-    };
-    const conf: Partial<SpringConfig> = {
-      // inject current state (position & velocity)
-      ...(current ?? {}),
-      // user config, note that user can override velocity and position by defining them in the config !
-      ...resolved,
-      // Override timeScale by the one defined in the SpringSequence
-      timeScale: this.timeScale,
-      // config.timeStart is used as an offset
-      timeStart: time + (resolved.timeStart ?? 0),
-    };
-    return Spring(conf);
-  };
-
-  /**
-   * Create an identical SpringSequence that does not depent on the source (safe to mutate)
-   */
-  public readonly clone = (): SpringSequence => {
-    return new SpringSequence(
-      this.steps.map((step) => ({ ...step })),
-      { timeScale: this.timeScale, initial: this.initialSpring(0), defaultConfig: this.defaultConfig }
-    );
-  };
-
-  /**
-   * Change the initial state of the spring.
-   * This will update all internal springs.
-   */
-  public readonly setInitial = (initial: Partial<SpringResult>): this => {
-    const current = this.initialSpring(0); // could fetch any time since initialSpring return the same value
-    this.initialSpring = createInitialSpring({ position: initial.position ?? current.position, velocity: initial.velocity ?? current.velocity });
-    this.updateFromIndex(0);
-    return this;
-  };
-
-  /**
-   * Change the default config. This will update all internal springs.
-   */
-  public readonly setDefaultConfig = (config: Partial<SpringConfig>): this => {
-    this.defaultConfig = config;
-    this.updateFromIndex(0);
-    return this;
-  };
-
-  /**
-   * Change timescale
-   */
-  public readonly setTimeScale = (timeScale: number): this => {
-    this.timeScale = timeScale;
-    this.updateFromIndex(0);
-    return this;
-  };
-
-  /**
-   * Insert a new step at the specified time
-   */
-  public readonly insertAt = (time: number, config: number | Partial<SpringConfig>): this => {
-    const step = this.findMaybeStepAt(time);
-    const newStep: SpringSequenceStep = { time, config: resolveConfig(config), spring: null };
-    if (step === null) {
-      // insert before all other steps
-      this.steps.unshift(newStep);
-      this.updateFromIndex(0);
-      return this;
-    }
-    const stepIndex = this.steps.indexOf(step);
-    // if time is the same, we replace the step
-    const deletePrev = step.time === time;
-    if (deletePrev) {
-      this.steps.splice(stepIndex, 1, newStep);
-      this.updateFromIndex(stepIndex);
-      return this;
-    }
-    this.steps.splice(stepIndex + 1, 0, newStep);
-    this.updateFromIndex(stepIndex + 1);
-    return this;
-  };
-
-  /**
-   * Add a new step and remove any step after it
-   */
-  public readonly replaceTail = (time: number, config: number | Partial<SpringConfig>): this => {
-    const step = this.findMaybeStepAt(time);
-    const stepIndex = step === null ? 0 : this.steps.indexOf(step);
-    this.steps.splice(stepIndex + 1, this.steps.length - stepIndex, { time, config: resolveConfig(config), spring: null });
-    this.updateFromIndex(stepIndex);
-    return this;
-  };
-
-  /**
-   * Replace all the steps by the new one
-   */
-  public readonly replaceAll = (time: number, config: number | Partial<SpringConfig>): this => {
-    this.steps.splice(0, this.steps.length, { time, config: resolveConfig(config), spring: null });
-    this.updateFromIndex(0);
-    return this;
-  };
-
-  /**
-   * Decay at time and remove everything after
-   */
-  public readonly decay = (time: number, config: Partial<SpringConfig> = {}): this => {
-    const stateAtTime = this.spring(time);
-    const decayConf = SpringConfig.decay({ ...stateAtTime, ...config });
-    const step = this.findMaybeStepAt(time);
-    const stepIndex = step === null ? 0 : this.steps.indexOf(step);
-    this.steps.splice(stepIndex, this.steps.length - stepIndex, { time, config: decayConf, spring: null });
-    this.updateFromIndex(stepIndex);
-    return this;
-  };
-
-  /**
-   * Remove all steps before time
-   */
-  public readonly clearBefore = (time: number): this => {
-    const step = this.findMaybeStepAt(time);
-    if (step === null) {
-      return this;
-    }
-    const stepIndex = this.steps.indexOf(step);
-    const stateAtTime = stepSpringOrThrow(step)(time);
-    this.steps.splice(0, stepIndex + 1);
-    // this will update steps
-    this.setInitial(stateAtTime);
-    return this;
-  };
-
-  /**
-   * Offset sequence by the specified time
-   */
-  public readonly offset = (offset: number): this => {
-    this.steps.forEach((step) => {
-      step.time = step.time + offset;
-    });
-    this.updateFromIndex(0);
-    return this;
-  };
+  defaultConfig?: Partial<ISpringConfig>;
+  initial?: Partial<ISpringConfig>;
 }
 
-function resolveConfig(conf: number | Partial<SpringConfig>): Partial<SpringConfig> {
+export interface ISpringSequence {
+  readonly spring: SpringFn;
+
+  clone(): ISpringSequence;
+  setInitial(initial: Partial<ISpringConfig>): ISpringSequence;
+  setDefaultConfig(config: Partial<ISpringConfig>): ISpringSequence;
+  setTimeScale(timeScale: number): ISpringSequence;
+  insertAt(time: number, config: number | Partial<ISpringConfig>): ISpringSequence;
+  replaceTail(time: number, config: number | Partial<ISpringConfig>): ISpringSequence;
+  replaceAll(time: number, config: number | Partial<ISpringConfig>): ISpringSequence;
+  decay(time: number, config?: Partial<ISpringConfig>): ISpringSequence;
+  clearBefore(time: number): ISpringSequence;
+  offset(offset: number): ISpringSequence;
+}
+
+export const SpringSequence = (() => {
+  return { create };
+
+  function create(options: SpringSequenceConfig = {}): ISpringSequence {
+    return createInternal([], options);
+  }
+
+  function createInternal(steps: Array<SpringSequenceStep>, config: SpringSequenceConfig): ISpringSequence {
+    let timeScale: number = config.timeScale ?? DEFAULT_TIME_SCALE;
+    let defaultConfig: Partial<ISpringConfig> = config.defaultConfig ?? {};
+    // const that return initial state at any time
+    let initialSpring: SpringFn = Spring({ ...defaultConfig, ...resolveInitialConfig(config.initial ?? {}) });
+    const spring: SpringFn = makeSpringFn(
+      defaultConfig,
+      (t) => findSpringAt(t)(t),
+      (t) => findSpringAt(t).position(t),
+      (t) => findSpringAt(t).velocity(t),
+      (t) => findSpringAt(t).stable(t)
+    );
+
+    const seq: ISpringSequence = {
+      spring,
+      clone,
+      setInitial,
+      setDefaultConfig,
+      setTimeScale,
+      insertAt,
+      replaceTail,
+      replaceAll,
+      decay,
+      clearBefore,
+      offset,
+    };
+
+    return seq;
+
+    function findSpringAt(t: number): SpringFn {
+      const step = findMaybeStepAt(t);
+      if (step) {
+        return stepSpringOrThrow(step);
+      }
+      return initialSpring;
+    }
+
+    /**
+     * Return the first step where t is >= to step.time
+     * Return null if t is before first step or no steps
+     */
+    function findMaybeStepAt(t: number): SpringSequenceStep | null {
+      if (steps.length === 0) {
+        return null;
+      }
+      if (t < steps[0].time) {
+        // t is before first time
+        return null;
+      }
+      let prev: null | SpringSequenceStep = null;
+      for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+        if (t < step.time) {
+          break;
+        }
+        prev = step;
+      }
+      return prev;
+    }
+
+    /**
+     * On initial config, if only one of position or equilibrium is defined,
+     * we set the other one to the same value.
+     */
+    function resolveInitialConfig(initial: Partial<ISpringConfig>): Partial<ISpringConfig> {
+      if (initial.position === undefined && initial.equilibrium === undefined) {
+        return { ...initial, position: 0, equilibrium: 0 };
+      }
+      if (initial.position === undefined && initial.equilibrium !== undefined) {
+        return { ...initial, position: initial.equilibrium };
+      }
+      if (initial.position !== undefined && initial.equilibrium === undefined) {
+        return { ...initial, equilibrium: initial.position };
+      }
+      return initial;
+    }
+
+    /**
+     * Update each step starting at the index
+     */
+    function updateFromIndex(index: number): void {
+      const indexResolved = index < 0 ? 0 : index;
+      if (indexResolved >= steps.length) {
+        return;
+      }
+      let prev: SpringFn = indexResolved === 0 ? initialSpring : stepSpringOrThrow(steps[index - 1]);
+      for (let i = index; i < steps.length; i++) {
+        const step = steps[i];
+        const spring = createSpring(step.time, prev(step.time), step.config);
+        step.spring = spring;
+        prev = spring;
+      }
+    }
+
+    /**
+     * Create a spring at a certain time using defaultConfig
+     */
+    function createSpring(time: number, current: SpringResult | null, config: number | Partial<ISpringConfig>): SpringFn {
+      const resolved = {
+        ...defaultConfig,
+        ...resolveConfig(config),
+      };
+      const conf: Partial<ISpringConfig> = {
+        // inject current state (position & velocity)
+        ...(current ?? {}),
+        // user config, note that user can override velocity and position by defining them in the config !
+        ...resolved,
+        // Override timeScale by the one defined in the SpringSequence
+        timeScale: timeScale,
+        // config.timeStart is used as an offset
+        timeStart: time + (resolved.timeStart ?? 0),
+      };
+      return Spring(conf);
+    }
+
+    /**
+     * Create an identical SpringSequence that does not depent on the source (safe to mutate)
+     */
+    function clone(): ISpringSequence {
+      return createInternal(
+        steps.map((step) => ({ ...step })),
+        { timeScale: timeScale, initial: initialSpring(0), defaultConfig: defaultConfig }
+      );
+    }
+
+    /**
+     * Change the initial state of the spring.
+     * This will update all internal springs.
+     */
+    function setInitial(initial: Partial<ISpringConfig>): ISpringSequence {
+      initialSpring = Spring({ ...defaultConfig, ...resolveInitialConfig(initial) });
+      updateFromIndex(0);
+      return seq;
+    }
+
+    /**
+     * Change the default config. This will update all internal springs.
+     */
+    function setDefaultConfig(config: Partial<ISpringConfig>): ISpringSequence {
+      defaultConfig = config;
+      updateFromIndex(0);
+      return seq;
+    }
+
+    /**
+     * Change timescale
+     */
+    function setTimeScale(newTimeScale: number): ISpringSequence {
+      timeScale = newTimeScale;
+      updateFromIndex(0);
+      return seq;
+    }
+
+    /**
+     * Insert a new step at the specified time
+     */
+    function insertAt(time: number, config: number | Partial<ISpringConfig>): ISpringSequence {
+      const step = findMaybeStepAt(time);
+      const newStep: SpringSequenceStep = { time, config: resolveConfig(config), spring: null };
+      if (step === null) {
+        // insert before all other steps
+        steps.unshift(newStep);
+        updateFromIndex(0);
+        return seq;
+      }
+      const stepIndex = steps.indexOf(step);
+      // if time is the same, we replace the step
+      const deletePrev = step.time === time;
+      if (deletePrev) {
+        steps.splice(stepIndex, 1, newStep);
+        updateFromIndex(stepIndex);
+        return seq;
+      }
+      steps.splice(stepIndex + 1, 0, newStep);
+      updateFromIndex(stepIndex + 1);
+      return seq;
+    }
+
+    /**
+     * Add a new step and remove any step after it
+     */
+    function replaceTail(time: number, config: number | Partial<ISpringConfig>): ISpringSequence {
+      const step = findMaybeStepAt(time);
+      const stepIndex = step === null ? 0 : steps.indexOf(step);
+      steps.splice(stepIndex + 1, steps.length - stepIndex, { time, config: resolveConfig(config), spring: null });
+      updateFromIndex(stepIndex);
+      return seq;
+    }
+
+    /**
+     * Replace all the steps by the new one
+     */
+    function replaceAll(time: number, config: number | Partial<ISpringConfig>): ISpringSequence {
+      steps.splice(0, steps.length, { time, config: resolveConfig(config), spring: null });
+      updateFromIndex(0);
+      return seq;
+    }
+
+    /**
+     * Decay at time and remove everything after
+     */
+    function decay(time: number, config: Partial<ISpringConfig> = {}): ISpringSequence {
+      const stateAtTime = spring(time);
+      const decayConf = SpringConfig.decay({ ...stateAtTime, ...config });
+      const step = findMaybeStepAt(time);
+      const stepIndex = step === null ? 0 : steps.indexOf(step);
+      steps.splice(stepIndex, steps.length - stepIndex, { time, config: decayConf, spring: null });
+      updateFromIndex(stepIndex);
+      return seq;
+    }
+
+    /**
+     * Remove all steps before time
+     */
+    function clearBefore(time: number): ISpringSequence {
+      const step = findMaybeStepAt(time);
+      if (step === null) {
+        return seq;
+      }
+      const stepIndex = steps.indexOf(step);
+      const stateAtTime = stepSpringOrThrow(step)(time);
+      steps.splice(0, stepIndex + 1);
+      // this will update steps
+      setInitial(stateAtTime);
+      return seq;
+    }
+
+    /**
+     * Offset sequence by the specified time
+     */
+    function offset(offset: number): ISpringSequence {
+      steps.forEach((step) => {
+        step.time = step.time + offset;
+      });
+      updateFromIndex(0);
+      return seq;
+    }
+  }
+})();
+
+function resolveConfig(conf: number | Partial<ISpringConfig>): Partial<ISpringConfig> {
   return typeof conf === 'number' ? { equilibrium: conf } : conf;
 }
 
-function stepSpringOrThrow(step: SpringSequenceStep): SpringSequenceFn {
+function stepSpringOrThrow(step: SpringSequenceStep): SpringFn {
   if (step.spring === null) {
     throw new Error(`Internal Error: steo.spring is null.`);
   }
   return step.spring;
-}
-
-function createInitialSpring(state: SpringResult): SpringSequenceFn {
-  return Object.assign(() => state, {
-    position: () => state.position,
-    velocity: () => state.velocity,
-  });
 }
