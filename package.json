@@ -1,6 +1,6 @@
 {
   "name": "humpf",
-  "version": "4.0.0-8",
+  "version": "4.0.0-9",
   "description": "Damped Spring position as a function of time",
   "keywords": [
     "spring",
