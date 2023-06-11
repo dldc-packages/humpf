@@ -35,5 +35,8 @@ export function toPrecision(num: number, precision: number): number {
 }
 
 export function isStable(res: SpringResult, conf: ISpringConfig): boolean {
-  return Math.abs(res.position - conf.equilibrium) <= conf.positionPrecision && Math.abs(res.velocity) <= conf.velocityPrecision;
+  return (
+    Math.abs(res.position - conf.equilibrium) <= conf.positionPrecision &&
+    Math.abs(res.velocity) <= conf.velocityPrecision
+  );
 }

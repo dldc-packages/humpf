@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { SpringConfig } from '../src/mod';
 
 test('SpringConfig.stable config cannot override equilibrium, position & velocity', () => {
@@ -21,7 +22,11 @@ test('SpringConfig.stable', () => {
 
 test('SpringConfig.gentle', () => {
   expect(SpringConfig.gentle()).toEqual({ angularFrequency: 0.6, dampingRatio: 0.6 });
-  expect(SpringConfig.gentle({ equilibrium: 200 })).toEqual({ angularFrequency: 0.6, dampingRatio: 0.6, equilibrium: 200 });
+  expect(SpringConfig.gentle({ equilibrium: 200 })).toEqual({
+    angularFrequency: 0.6,
+    dampingRatio: 0.6,
+    equilibrium: 200,
+  });
 });
 
 test('SpringConfig.defaults', () => {
@@ -70,18 +75,31 @@ test('SpringConfig.slow', () => {
 
 test('SpringConfig.stiff', () => {
   expect(SpringConfig.stiff()).toEqual({ angularFrequency: 1.1, dampingRatio: 0.7 });
-  expect(SpringConfig.stiff({ equilibrium: 200 })).toEqual({ angularFrequency: 1.1, dampingRatio: 0.7, equilibrium: 200 });
+  expect(SpringConfig.stiff({ equilibrium: 200 })).toEqual({
+    angularFrequency: 1.1,
+    dampingRatio: 0.7,
+    equilibrium: 200,
+  });
 });
 
 test('SpringConfig.wobbly', () => {
   expect(SpringConfig.wobbly()).toEqual({ angularFrequency: 0.8, dampingRatio: 0.4 });
-  expect(SpringConfig.wobbly({ equilibrium: 200 })).toEqual({ angularFrequency: 0.8, dampingRatio: 0.4, equilibrium: 200 });
+  expect(SpringConfig.wobbly({ equilibrium: 200 })).toEqual({
+    angularFrequency: 0.8,
+    dampingRatio: 0.4,
+    equilibrium: 200,
+  });
 });
 
 test('SpringConfig.decay', () => {
   expect(SpringConfig.decay()).toEqual({ dampingRatio: 1, equilibrium: 0 });
   expect(SpringConfig.decay({ position: 400 })).toEqual({ dampingRatio: 1, equilibrium: 400, position: 400 });
-  expect(SpringConfig.decay({ position: 400, velocity: -30 })).toEqual({ dampingRatio: 1, velocity: -30, equilibrium: 370, position: 400 });
+  expect(SpringConfig.decay({ position: 400, velocity: -30 })).toEqual({
+    dampingRatio: 1,
+    velocity: -30,
+    equilibrium: 370,
+    position: 400,
+  });
 });
 
 test('SpringConfig.findEquilibrium', () => {

@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { Spring, SpringConfig } from '../src/mod';
 import { canvasImage } from './utils';
 
@@ -12,7 +13,11 @@ test('Basic spring is working', async () => {
   expect(spring(1000)).toEqual({ position: 0.98638916015625, velocity: 0.01171875 });
   expect(spring(2500)).toEqual({ position: 1, velocity: 0 });
   expect(
-    await canvasImage(spring, 'basic-spring', { timeAxis: [0, 3000], position: { min: 0, max: 1 }, velocity: { min: -0.1, max: 0.5 } })
+    await canvasImage(spring, 'basic-spring', {
+      timeAxis: [0, 3000],
+      position: { min: 0, max: 1 },
+      velocity: { min: -0.1, max: 0.5 },
+    })
   ).toMatchSnapshot();
 });
 
@@ -21,7 +26,9 @@ test('When dampingRatio=0 it goes back to position after 1 unit of time', async 
   expect(spring(0)).toEqual({ position: 0, velocity: 0 });
   expect(spring(1)).toEqual({ position: 0, velocity: -0 });
   expect(spring(2)).toEqual({ position: 0, velocity: -0 });
-  expect(await canvasImage(spring, 'spring-bounce', { timeAxis: [0, 3], position: { min: 0, max: 2 } })).toMatchSnapshot();
+  expect(
+    await canvasImage(spring, 'spring-bounce', { timeAxis: [0, 3], position: { min: 0, max: 2 } })
+  ).toMatchSnapshot();
 });
 
 test('Spring position is the same as spring().position', () => {
@@ -64,7 +71,9 @@ test('Overdamped spring', async () => {
   expect(spring(2000)).toEqual({ position: 96.284423828125, velocity: 0.99560546875 });
   expect(spring(1500).position).toEqual(spring.position(1500));
   expect(spring(1500).velocity).toEqual(spring.velocity(1500));
-  expect(await canvasImage(spring, 'spring-overdamped', { timeAxis: [0, 2500], position: { min: 0, max: 100 } })).toMatchSnapshot();
+  expect(
+    await canvasImage(spring, 'spring-overdamped', { timeAxis: [0, 2500], position: { min: 0, max: 100 } })
+  ).toMatchSnapshot();
 });
 
 test('Underdamped spring', async () => {
@@ -78,7 +87,9 @@ test('Underdamped spring', async () => {
   expect(spring(2000)).toEqual({ position: 100.128173828125, velocity: -0.2142333984375 });
   expect(spring(1500).position).toEqual(spring.position(1500));
   expect(spring(1500).velocity).toEqual(spring.velocity(1500));
-  expect(await canvasImage(spring, 'spring-underdamped', { timeAxis: [0, 2500], position: { min: 0, max: 150 } })).toMatchSnapshot();
+  expect(
+    await canvasImage(spring, 'spring-underdamped', { timeAxis: [0, 2500], position: { min: 0, max: 150 } })
+  ).toMatchSnapshot();
 });
 
 test('TimeStart option', async () => {
@@ -89,7 +100,9 @@ test('TimeStart option', async () => {
   expect(spring(1250)).toEqual({ position: 46.55841064453125, velocity: 32.65362548828125 });
   expect(spring(1500)).toEqual({ position: 82.1025390625, velocity: 13.5760498046875 });
   expect(spring(2000)).toEqual({ position: 98.639892578125, velocity: 1.17333984375 });
-  expect(await canvasImage(spring, 'spring-delay', { timeAxis: [0, 2500], position: { min: 0, max: 100 } })).toMatchSnapshot();
+  expect(
+    await canvasImage(spring, 'spring-delay', { timeAxis: [0, 2500], position: { min: 0, max: 100 } })
+  ).toMatchSnapshot();
 });
 
 test('Negative timeStart option', async () => {
@@ -99,7 +112,11 @@ test('Negative timeStart option', async () => {
   expect(spring(0)).toEqual({ position: 82.1025390625, velocity: 13.5760498046875 });
   expect(spring(500)).toEqual({ position: 98.639892578125, velocity: 1.17333984375 });
   expect(
-    await canvasImage(spring, 'spring-negative-delay', { timeAxis: [-500, 500], position: { min: 0, max: 100 }, events: [{ time: 0 }] })
+    await canvasImage(spring, 'spring-negative-delay', {
+      timeAxis: [-500, 500],
+      position: { min: 0, max: 100 },
+      events: [{ time: 0 }],
+    })
   ).toMatchSnapshot();
 });
 
@@ -111,7 +128,11 @@ test('Decay', async () => {
   expect(spring(1000)).toEqual({ position: 4.99066162109375, velocity: 0.00933837890625 });
   expect(spring(2000)).toEqual({ position: 5, velocity: 0 });
   expect(
-    await canvasImage(spring, 'spring-decay', { timeAxis: [0, 2000], position: { min: 0, max: 5 }, velocity: { min: 0, max: 5 } })
+    await canvasImage(spring, 'spring-decay', {
+      timeAxis: [0, 2000],
+      position: { min: 0, max: 5 },
+      velocity: { min: 0, max: 5 },
+    })
   ).toMatchSnapshot();
 });
 
@@ -123,7 +144,9 @@ test('Identity spring', async () => {
   expect(spring.velocity(1000)).toEqual(0);
   expect(spring(0)).toEqual({ position: 0, velocity: 0 });
   expect(spring(1000)).toEqual({ position: 0, velocity: 0 });
-  expect(await canvasImage(spring, 'spring-identity', { timeAxis: [0, 1000], position: { min: -1, max: 1 } })).toMatchSnapshot();
+  expect(
+    await canvasImage(spring, 'spring-identity', { timeAxis: [0, 1000], position: { min: -1, max: 1 } })
+  ).toMatchSnapshot();
 });
 
 test('Stable spring', () => {

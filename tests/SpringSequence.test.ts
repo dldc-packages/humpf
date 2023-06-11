@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { SpringSequence } from '../src/mod';
 import { canvasImage } from './utils';
 
@@ -31,7 +32,11 @@ test('Create with initial', () => {
 test('SpringSequence insertAt', async () => {
   const seq = SpringSequence.create().insertAt(200, 100).insertAt(1000, 300).insertAt(2000, 0);
   expect(
-    await canvasImage(seq.spring, 'sequence-insertAt', { timeAxis: [0, 4000], position: { min: 0, max: 350 }, velocity: { min: -120, max: 120 } })
+    await canvasImage(seq.spring, 'sequence-insertAt', {
+      timeAxis: [0, 4000],
+      position: { min: 0, max: 350 },
+      velocity: { min: -120, max: 120 },
+    })
   ).toMatchSnapshot();
 });
 

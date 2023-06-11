@@ -129,7 +129,11 @@ export const SpringSequence = (() => {
     /**
      * Create a spring at a certain time using defaultConfig
      */
-    function createSpring(time: number, current: SpringResult | null, config: number | Partial<ISpringConfig>): SpringFn {
+    function createSpring(
+      time: number,
+      current: SpringResult | null,
+      config: number | Partial<ISpringConfig>
+    ): SpringFn {
       const resolved = {
         ...defaultConfig,
         ...resolveConfig(config),

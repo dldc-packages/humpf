@@ -159,7 +159,14 @@ export async function canvasImage(
   return values;
 }
 
-function drawCurve(ctx: CanvasRenderingContext2D, values: Array<number>, min: number, max: number, height: number, color: string): void {
+function drawCurve(
+  ctx: CanvasRenderingContext2D,
+  values: Array<number>,
+  min: number,
+  max: number,
+  height: number,
+  color: string
+): void {
   ctx.strokeStyle = color;
   ctx.beginPath();
   values.forEach((val, x) => {
