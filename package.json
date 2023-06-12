@@ -38,7 +38,7 @@
   ],
   "scripts": {
     "build": "rimraf dist && tsup --format cjs,esm src/mod.ts --dts src/mod.ts",
-    "build:deno": "rimraf deno_dist && denoify",
+    "build:deno": "rimraf deno && denoify --out deno",
     "lint": "prettier . --check && eslint . && tsc --noEmit",
     "lint:fix": "prettier . --write . && eslint . --fix",
     "release": "release-it",
