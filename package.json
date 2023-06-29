@@ -1,5 +1,5 @@
 {
-  "name": "humpf",
+  "name": "@dldc/humpf",
   "version": "4.0.0-10",
   "description": "Damped Spring position as a function of time",
   "keywords": [
@@ -12,13 +12,13 @@
     "decay",
     "smooth"
   ],
-  "homepage": "https://github.com/etienne-dldc/humpf#readme",
+  "homepage": "https://github.com/dldc-packages/humpf#readme",
   "bugs": {
-    "url": "https://github.com/etienne-dldc/humpf/issues"
+    "url": "https://github.com/dldc-packages/humpf/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/etienne-dldc/humpf.git"
+    "url": "git+https://github.com/dldc-packages/humpf.git"
   },
   "license": "MIT",
   "author": "Etienne Dldc <e.deladonchamps@gmail.com>",
