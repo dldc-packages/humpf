@@ -25,7 +25,7 @@ export function makeSpringFn(
   main: (t: number) => SpringResult,
   position: (t: number) => number,
   velocity: (t: number) => number,
-  stable: (t: number) => boolean
+  stable: (t: number) => boolean,
 ): SpringFn {
   return Object.assign(main, { position, velocity, stable, config });
 }

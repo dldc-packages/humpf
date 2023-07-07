@@ -36,7 +36,7 @@ test('SpringSequence insertAt', async () => {
       timeAxis: [0, 4000],
       position: { min: 0, max: 350 },
       velocity: { min: -120, max: 120 },
-    })
+    }),
   ).toMatchSnapshot();
 });
 
@@ -48,6 +48,6 @@ test('SpringSequence replaceTail', async () => {
       position: { min: 0, max: 350 },
       velocity: { min: -120, max: 120 },
       events: [{ time: 2300 }],
-    })
+    }),
   ).toMatchSnapshot();
 });

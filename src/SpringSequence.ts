@@ -42,7 +42,7 @@ export const SpringSequence = (() => {
       (t) => findSpringAt(t)(t),
       (t) => findSpringAt(t).position(t),
       (t) => findSpringAt(t).velocity(t),
-      (t) => findSpringAt(t).stable(t)
+      (t) => findSpringAt(t).stable(t),
     );
 
     const seq: ISpringSequence = {
@@ -132,7 +132,7 @@ export const SpringSequence = (() => {
     function createSpring(
       time: number,
       current: SpringResult | null,
-      config: number | Partial<ISpringConfig>
+      config: number | Partial<ISpringConfig>,
     ): SpringFn {
       const resolved = {
         ...defaultConfig,
@@ -157,7 +157,7 @@ export const SpringSequence = (() => {
     function clone(): ISpringSequence {
       return createInternal(
         steps.map((step) => ({ ...step })),
-        { timeScale: timeScale, initial: initialSpring(0), defaultConfig: defaultConfig }
+        { timeScale: timeScale, initial: initialSpring(0), defaultConfig: defaultConfig },
       );
     }
 

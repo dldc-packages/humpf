@@ -52,7 +52,7 @@ export type SpringExport = Array<[time: number, pos: number, vel: number]>;
 export async function canvasImage(
   spring: SpringFn,
   fileName: string,
-  { width = 600, timeAxis, position, velocity, events }: CanvasImageConfig
+  { width = 600, timeAxis, position, velocity, events }: CanvasImageConfig,
 ): Promise<SpringExport> {
   // create value for each width pixel
   const values: SpringExport = [];
@@ -110,7 +110,7 @@ export async function canvasImage(
       min,
       max,
       height,
-      '#42A5F5'
+      '#42A5F5',
     );
 
     ctx.translate(0, height + padding);
@@ -141,7 +141,7 @@ export async function canvasImage(
       min,
       max,
       height,
-      '#EF5350'
+      '#EF5350',
     );
   }
 
@@ -165,7 +165,7 @@ function drawCurve(
   min: number,
   max: number,
   height: number,
-  color: string
+  color: string,
 ): void {
   ctx.strokeStyle = color;
   ctx.beginPath();
