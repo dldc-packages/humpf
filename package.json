@@ -82,5 +82,8 @@
       "web": true,
       "autoGenerate": true
     }
+  },
+  "dependencies": {
+    "@dldc/erreur": "^3.0.6"
   }
 }

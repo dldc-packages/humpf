@@ -1,5 +1,6 @@
-import { invariant, normalizeT, makeSpringFn, toPrecision, isStable } from './utils';
-import { type ISpringConfig, SpringConfig } from './SpringConfig';
+import { HumpfErreur } from './HumpfErreur';
+import { SpringConfig, type ISpringConfig } from './SpringConfig';
+import { isStable, makeSpringFn, normalizeT, toPrecision } from './utils';
 
 export interface SpringResult {
   position: number;
@@ -19,8 +20,12 @@ export interface SpringFn {
 export function Spring(config: Partial<ISpringConfig> = {}): SpringFn {
   const conf = SpringConfig.defaults(config);
 
-  invariant(conf.dampingRatio >= 0, 'Damping Ration must be >= 0');
-  invariant(conf.angularFrequency >= 0, 'Angular Frequency must be >= 0');
+  if (conf.dampingRatio < 0) {
+    throw HumpfErreur.InvalidDamperRatio.create({ received: conf.dampingRatio });
+  }
+  if (conf.angularFrequency < 0) {
+    throw HumpfErreur.InvalidAngularFrequency.create({ received: conf.angularFrequency });
+  }
 
   // if there is no angular frequency or the spring is stable,
   // then the spring will not move and we can

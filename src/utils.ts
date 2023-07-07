@@ -9,13 +9,6 @@ import { ISpringConfig } from './SpringConfig';
  */
 const NORMALIZE_TIME_MULTIPLE = Math.PI * 2;
 
-export function invariant(condition: boolean, message: string): void {
-  if (condition) {
-    return;
-  }
-  throw new Error(`Invariant failed: ${message}`);
-}
-
 export function normalizeT(t: number, timeScale: number, timeStart: number): number {
   return (Math.max(0, t - timeStart) * NORMALIZE_TIME_MULTIPLE) / timeScale;
 }
