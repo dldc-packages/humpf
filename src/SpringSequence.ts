@@ -282,7 +282,7 @@ function resolveConfig(conf: number | Partial<ISpringConfig>): Partial<ISpringCo
 
 function stepSpringOrThrow(step: SpringSequenceStep): SpringFn {
   if (step.spring === null) {
-    throw new Error(`Internal Error: steo.spring is null.`);
+    throw new Error(`Internal Error: step.spring is null.`);
   }
   return step.spring;
 }
