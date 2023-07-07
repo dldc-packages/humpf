@@ -47,6 +47,9 @@
     "typecheck": "tsc",
     "typecheck:watch": "tsc --watch"
   },
+  "dependencies": {
+    "@dldc/erreur": "^3.0.6"
+  },
   "devDependencies": {
     "@types/node": "^20.4.0",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
@@ -82,8 +85,5 @@
       "web": true,
       "autoGenerate": true
     }
-  },
-  "dependencies": {
-    "@dldc/erreur": "^3.0.6"
   }
 }
