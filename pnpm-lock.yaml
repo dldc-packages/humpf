@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@dldc/erreur':
-    specifier: ^3.0.6
-    version: 3.0.6
+    specifier: ^3.0.7
+    version: 3.0.7
 
 devDependencies:
   '@types/node':
@@ -26,8 +26,8 @@ devDependencies:
     specifier: ^2.4.0
     version: 2.4.0
   canvas:
-    specifier: ^2.11.0
-    version: 2.11.0
+    specifier: ^2.11.2
+    version: 2.11.2
   eslint:
     specifier: ^8.44.0
     version: 8.44.0
@@ -93,14 +93,14 @@ packages:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
 
-  /@dldc/erreur@3.0.6:
-    resolution: {integrity: sha512-Kp8K6roiCkqBRvW46UiQcX8yTRiNAqrKpZUILTB7WPdyKUkqkrVZB47aAA17iy/vZCQ5cF9NeiVBOvSFTBOyKQ==}
+  /@dldc/erreur@3.0.7:
+    resolution: {integrity: sha512-HV9e5/O80YleOjXA6D5Wog83Ar8yhwzM67PdhLF2LiB0jSKyMODIPOI+8H/qauYDqU/51zmVMryV9j/CLh3CMA==}
     dependencies:
-      '@dldc/stack': 3.0.4
+      '@dldc/stack': 3.1.0
     dev: false
 
-  /@dldc/stack@3.0.4:
-    resolution: {integrity: sha512-v3CRaq0yGqT6l0kvuCCAulimOQetn6UAXtJ211+ZhZPIUK+224QEKnVvIo2Hg5DXfotv4SjJG7AI7KlUq67zEg==}
+  /@dldc/stack@3.1.0:
+    resolution: {integrity: sha512-br/OD1JEGeEmJNqaRZQ6cT+NGkR6sI0ECw7+KYl89nWIjmI0PazdjpUnof+gr7OEB0yV1FQTvvjVq29eNOfJ2w==}
     dev: false
 
   /@esbuild/android-arm64@0.18.11:
@@ -1185,8 +1185,8 @@ packages:
     engines: {node: '>=14.16'}
     dev: true
 
-  /canvas@2.11.0:
-    resolution: {integrity: sha512-bdTjFexjKJEwtIo0oRx8eD4G2yWoUOXP9lj279jmQ2zMnTQhT8C3512OKz3s+ZOaQlLbE7TuVvRDYDB3Llyy5g==}
+  /canvas@2.11.2:
+    resolution: {integrity: sha512-ItanGBMrmRV7Py2Z+Xhs7cT+FNt5K0vPL4p9EZ/UX/Mu7hFbkxSjKF2KVtPwX7UYWp7dRKnrTvReflgrItJbdw==}
     engines: {node: '>=6'}
     requiresBuild: true
     dependencies:
