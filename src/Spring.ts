@@ -2,13 +2,13 @@ import { HumpfErreur } from './HumpfErreur';
 import { SpringConfig, type ISpringConfig } from './SpringConfig';
 import { isStable, makeSpringFn, normalizeT, toPrecision } from './utils';
 
-export interface SpringResult {
+export interface ISpringResult {
   position: number;
   velocity: number;
 }
 
-export interface SpringFn {
-  (t: number): SpringResult;
+export interface ISpringFn {
+  (t: number): ISpringResult;
   readonly position: (t: number) => number;
   readonly velocity: (t: number) => number;
   // returns true if the spring is stable at time t
@@ -17,7 +17,7 @@ export interface SpringFn {
   readonly config: Readonly<Partial<ISpringConfig>>;
 }
 
-export function Spring(config: Partial<ISpringConfig> = {}): SpringFn {
+export function Spring(config: Partial<ISpringConfig> = {}): ISpringFn {
   const conf = SpringConfig.defaults(config);
 
   if (conf.dampingRatio < 0) {
@@ -49,7 +49,7 @@ export function Spring(config: Partial<ISpringConfig> = {}): SpringFn {
   return springCriticallyDamped(conf, config);
 }
 
-function springIdentity(position: number, velocity: number, originalConf: Partial<ISpringConfig>): SpringFn {
+function springIdentity(position: number, velocity: number, originalConf: Partial<ISpringConfig>): ISpringFn {
   const identity = { position, velocity };
   return makeSpringFn(
     originalConf,
@@ -60,7 +60,7 @@ function springIdentity(position: number, velocity: number, originalConf: Partia
   );
 }
 
-function springOverDamped(conf: ISpringConfig, originalConf: Partial<ISpringConfig>): SpringFn {
+function springOverDamped(conf: ISpringConfig, originalConf: Partial<ISpringConfig>): ISpringFn {
   const za = -conf.angularFrequency * conf.dampingRatio;
   const zb = conf.angularFrequency * Math.sqrt(conf.dampingRatio * conf.dampingRatio - 1);
   const z1 = za - zb;
@@ -203,7 +203,7 @@ function springOverDampedVelocity(
   );
 }
 
-function springUnderDamped(conf: ISpringConfig, originalConf: Partial<ISpringConfig>): SpringFn {
+function springUnderDamped(conf: ISpringConfig, originalConf: Partial<ISpringConfig>): ISpringFn {
   const omegaZeta = conf.angularFrequency * conf.dampingRatio;
   const alpha = conf.angularFrequency * Math.sqrt(1 - conf.dampingRatio * conf.dampingRatio);
   const posDiff = conf.position - conf.equilibrium;
@@ -338,7 +338,7 @@ function springUnderDampedVelocity(
   );
 }
 
-function springCriticallyDamped(conf: ISpringConfig, originalConf: Partial<ISpringConfig>): SpringFn {
+function springCriticallyDamped(conf: ISpringConfig, originalConf: Partial<ISpringConfig>): ISpringFn {
   const oldPos = conf.position - conf.equilibrium; // update in equilibrium relative space
 
   const main = (t: number) => {

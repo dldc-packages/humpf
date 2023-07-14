@@ -2,7 +2,7 @@ import type { CanvasRenderingContext2D } from 'canvas';
 import { createCanvas } from 'canvas';
 import { createWriteStream } from 'fs';
 import { resolve } from 'path';
-import type { SpringFn } from '../src/mod';
+import type { ISpringFn } from '../src/mod';
 
 export function map(inMin: number, inMax: number, outMin: number, outMax: number, num: number): number {
   return ((num - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
@@ -23,7 +23,7 @@ export type SpringExport = Array<[time: number, pos: number, vel: number]>;
  * and returns data
  */
 export async function canvasImage(
-  spring: SpringFn,
+  spring: ISpringFn,
   fileName: string,
   { width = 600, timeAxis, position, velocity, events }: CanvasImageConfig,
 ): Promise<SpringExport> {

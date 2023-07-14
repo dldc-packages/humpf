@@ -1,19 +1,19 @@
-import type { SpringFn, SpringResult } from './Spring';
+import type { ISpringFn, ISpringResult } from './Spring';
 import { Spring } from './Spring';
 import type { ISpringConfig } from './SpringConfig';
 import { DEFAULT_TIME_SCALE, SpringConfig } from './SpringConfig';
 import { makeSpringFn } from './utils';
 
-type SpringSequenceStep = { time: number; config: Partial<ISpringConfig>; spring: SpringFn | null };
+type SpringSequenceStep = { time: number; config: Partial<ISpringConfig>; spring: ISpringFn | null };
 
-export interface SpringSequenceConfig {
+export interface ISpringSequenceConfig {
   timeScale?: number;
   defaultConfig?: Partial<ISpringConfig>;
   initial?: Partial<ISpringConfig>;
 }
 
 export interface ISpringSequence {
-  readonly spring: SpringFn;
+  readonly spring: ISpringFn;
 
   clone(): ISpringSequence;
   setInitial(initial: Partial<ISpringConfig>): ISpringSequence;
@@ -30,16 +30,16 @@ export interface ISpringSequence {
 export const SpringSequence = (() => {
   return { create };
 
-  function create(options: SpringSequenceConfig = {}): ISpringSequence {
+  function create(options: ISpringSequenceConfig = {}): ISpringSequence {
     return createInternal([], options);
   }
 
-  function createInternal(steps: Array<SpringSequenceStep>, config: SpringSequenceConfig): ISpringSequence {
+  function createInternal(steps: Array<SpringSequenceStep>, config: ISpringSequenceConfig): ISpringSequence {
     let timeScale: number = config.timeScale ?? DEFAULT_TIME_SCALE;
     let defaultConfig: Partial<ISpringConfig> = config.defaultConfig ?? {};
     // const that return initial state at any time
-    let initialSpring: SpringFn = Spring({ ...defaultConfig, ...resolveInitialConfig(config.initial ?? {}) });
-    const spring: SpringFn = makeSpringFn(
+    let initialSpring: ISpringFn = Spring({ ...defaultConfig, ...resolveInitialConfig(config.initial ?? {}) });
+    const spring: ISpringFn = makeSpringFn(
       defaultConfig,
       (t) => findSpringAt(t)(t),
       (t) => findSpringAt(t).position(t),
@@ -63,7 +63,7 @@ export const SpringSequence = (() => {
 
     return seq;
 
-    function findSpringAt(t: number): SpringFn {
+    function findSpringAt(t: number): ISpringFn {
       const step = findMaybeStepAt(t);
       if (step) {
         return stepSpringOrThrow(step);
@@ -119,7 +119,7 @@ export const SpringSequence = (() => {
       if (indexResolved >= steps.length) {
         return;
       }
-      let prev: SpringFn = indexResolved === 0 ? initialSpring : stepSpringOrThrow(steps[index - 1]);
+      let prev: ISpringFn = indexResolved === 0 ? initialSpring : stepSpringOrThrow(steps[index - 1]);
       for (let i = index; i < steps.length; i++) {
         const step = steps[i];
         const spring = createSpring(step.time, prev(step.time), step.config);
@@ -133,9 +133,9 @@ export const SpringSequence = (() => {
      */
     function createSpring(
       time: number,
-      current: SpringResult | null,
+      current: ISpringResult | null,
       config: number | Partial<ISpringConfig>,
-    ): SpringFn {
+    ): ISpringFn {
       const resolved = {
         ...defaultConfig,
         ...resolveConfig(config),
@@ -282,7 +282,7 @@ function resolveConfig(conf: number | Partial<ISpringConfig>): Partial<ISpringCo
   return typeof conf === 'number' ? { equilibrium: conf } : conf;
 }
 
-function stepSpringOrThrow(step: SpringSequenceStep): SpringFn {
+function stepSpringOrThrow(step: SpringSequenceStep): ISpringFn {
   if (step.spring === null) {
     throw new Error(`Internal Error: step.spring is null.`);
   }

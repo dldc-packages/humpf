@@ -1,4 +1,4 @@
-import type { SpringFn, SpringResult } from './Spring';
+import type { ISpringFn, ISpringResult } from './Spring';
 import type { ISpringConfig } from './SpringConfig';
 
 /**
@@ -15,11 +15,11 @@ export function normalizeT(t: number, timeScale: number, timeStart: number): num
 
 export function makeSpringFn(
   config: Partial<ISpringConfig>,
-  main: (t: number) => SpringResult,
+  main: (t: number) => ISpringResult,
   position: (t: number) => number,
   velocity: (t: number) => number,
   stable: (t: number) => boolean,
-): SpringFn {
+): ISpringFn {
   return Object.assign(main, { position, velocity, stable, config });
 }
 
@@ -27,7 +27,7 @@ export function toPrecision(num: number, precision: number): number {
   return Math.round(num / precision) * precision;
 }
 
-export function isStable(res: SpringResult, conf: ISpringConfig): boolean {
+export function isStable(res: ISpringResult, conf: ISpringConfig): boolean {
   return (
     Math.abs(res.position - conf.equilibrium) <= conf.positionPrecision &&
     Math.abs(res.velocity) <= conf.velocityPrecision
