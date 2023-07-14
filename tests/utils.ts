@@ -1,7 +1,8 @@
-import { CanvasRenderingContext2D, createCanvas } from 'canvas';
+import type { CanvasRenderingContext2D } from 'canvas';
+import { createCanvas } from 'canvas';
 import { createWriteStream } from 'fs';
 import { resolve } from 'path';
-import { SpringFn } from '../src/mod';
+import type { SpringFn } from '../src/mod';
 
 export function map(inMin: number, inMax: number, outMin: number, outMax: number, num: number): number {
   return ((num - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;

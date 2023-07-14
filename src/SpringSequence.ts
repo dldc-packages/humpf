@@ -1,5 +1,7 @@
-import { Spring, SpringFn, SpringResult } from './Spring';
-import { DEFAULT_TIME_SCALE, ISpringConfig, SpringConfig } from './SpringConfig';
+import type { SpringFn, SpringResult } from './Spring';
+import { Spring } from './Spring';
+import type { ISpringConfig } from './SpringConfig';
+import { DEFAULT_TIME_SCALE, SpringConfig } from './SpringConfig';
 import { makeSpringFn } from './utils';
 
 type SpringSequenceStep = { time: number; config: Partial<ISpringConfig>; spring: SpringFn | null };

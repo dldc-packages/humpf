@@ -1,5 +1,5 @@
-import { SpringFn, SpringResult } from './Spring';
-import { ISpringConfig } from './SpringConfig';
+import type { SpringFn, SpringResult } from './Spring';
+import type { ISpringConfig } from './SpringConfig';
 
 /**
  * This values is chosen to make a spring with dampingRatio of 0
