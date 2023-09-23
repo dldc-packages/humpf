@@ -21,10 +21,10 @@ export function Spring(config: Partial<ISpringConfig> = {}): ISpringFn {
   const conf = SpringConfig.defaults(config);
 
   if (conf.dampingRatio < 0) {
-    throw HumpfErreur.InvalidDamperRatio.create({ received: conf.dampingRatio });
+    throw HumpfErreur.InvalidDamperRatio.create(conf.dampingRatio);
   }
   if (conf.angularFrequency < 0) {
-    throw HumpfErreur.InvalidAngularFrequency.create({ received: conf.angularFrequency });
+    throw HumpfErreur.InvalidAngularFrequency.create(conf.angularFrequency);
   }
 
   // if there is no angular frequency or the spring is stable,
