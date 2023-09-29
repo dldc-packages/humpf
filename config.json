@@ -1,6 +1,0 @@
-{
-  "vitestNoThreads": true,
-  "additionalDevDependencies": {
-    "canvas": "^2.11.2"
-  }
-}
