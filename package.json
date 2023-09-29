@@ -98,6 +98,7 @@
     "@typescript-eslint/parser": "^6.7.3",
     "@vitest/coverage-v8": "^0.34.5",
     "auto-changelog": "^2.4.0",
+    "canvas": "^2.11.2",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "prettier": "^3.0.3",
@@ -111,6 +112,12 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"
+  },
+  "dldcConfig": {
+    "vitestNoThreads": true,
+    "additionalDevDependencies": [
+      "canvas"
+    ]
   },
   "release-it": {
     "hooks": {
