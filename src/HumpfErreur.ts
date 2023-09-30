@@ -1,9 +1,9 @@
-import type { IKey } from '@dldc/erreur';
+import type { TKey } from '@dldc/erreur';
 import { Erreur, Key } from '@dldc/erreur';
 
 export const HumpfErreur = (() => {
-  const InvalidDamperRatioKey: IKey<{ received: number }, false> = Key.create('InvalidDamperRatio');
-  const InvalidAngularFrequencyKey: IKey<{ received: number }, false> = Key.create('InvalidAngularFrequency');
+  const InvalidDamperRatioKey: TKey<{ received: number }> = Key.create('InvalidDamperRatio');
+  const InvalidAngularFrequencyKey: TKey<{ received: number }> = Key.create('InvalidAngularFrequency');
 
   return {
     InvalidDamperRatio: {
