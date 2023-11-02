@@ -1,10 +1,14 @@
 <p align="center">
-  <img src="https://github.com/etienne-dldc/humpf/blob/main/design/logo.png" width="597" alt="humpf logo">
+  <img src="https://github.com/dldc-packages/humpf/blob/main/design/logo.png" width="597" alt="humpf logo">
 </p>
 
-# 📐 Humpf [![Build Status](https://travis-ci.org/etienne-dldc/humpf.svg?branch=master)](https://travis-ci.org/etienne-dldc/humpf) [![](https://badgen.net/bundlephobia/minzip/humpf)](https://bundlephobia.com/result?p=humpf)
+# 📐 Humpf
 
 > Damped Spring position as a function of time
+
+```bash
+npm install @dldc/humpf
+```
 
 ## What is this
 
@@ -22,7 +26,7 @@ Humpf is different because it does not update a value but give you a function th
 ## Gist
 
 ```ts
-import { Spring } from 'humpf';
+import { Spring } from '@dldc/humpf';
 
 const spring = Spring();
 
