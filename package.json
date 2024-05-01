@@ -1,6 +1,6 @@
 {
   "name": "@dldc/humpf",
-  "version": "5.0.3",
+  "version": "6.0.0",
   "description": "Damped Spring position as a function of time",
   "keywords": [
     "spring",
