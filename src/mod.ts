@@ -1,4 +1,4 @@
-export { HumpfErreur } from './HumpfErreur';
+export { HumpfErreur, type THumpfErreurData } from './HumpfErreur';
 export { Spring, type ISpringFn, type ISpringResult } from './Spring';
 export {
   DEFAULT_CONFIG,

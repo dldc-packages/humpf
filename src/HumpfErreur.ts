@@ -1,21 +1,23 @@
-import type { TKey } from '@dldc/erreur';
-import { Erreur, Key } from '@dldc/erreur';
+import { createErreurStore } from '@dldc/erreur';
 
 export type THumpfErreurData =
   | { kind: 'InvalidDamperRatio'; received: number }
   | { kind: 'InvalidAngularFrequency'; received: number };
 
-export const HumpfErreurKey: TKey<THumpfErreurData, false> = Key.create<THumpfErreurData>('HumpfErreur');
+const HumpfErreurInternal = createErreurStore<THumpfErreurData>();
 
-export const HumpfErreur = {
-  InvalidDamperRatio: (received: number) => {
-    return Erreur.create(new Error('Damping Ration must be >= 0 (received: ${received})'))
-      .with(HumpfErreurKey.Provider({ kind: 'InvalidDamperRatio', received }))
-      .withName('HumpfErreur');
-  },
-  InvalidAngularFrequency: (received: number) => {
-    return Erreur.create(new Error('Angular Frequency must be >= 0 (received: ${received})'))
-      .with(HumpfErreurKey.Provider({ kind: 'InvalidAngularFrequency', received }))
-      .withName('HumpfErreur');
-  },
-};
+export const HumpfErreur = HumpfErreurInternal.asReadonly;
+
+export function throwInvalidDamperRatio(received: number): never {
+  return HumpfErreurInternal.setAndThrow(`Damping Ration must be >= 0 (received: ${received})`, {
+    kind: 'InvalidDamperRatio',
+    received,
+  });
+}
+
+export function throwInvalidAngularFrequency(received: number): never {
+  return HumpfErreurInternal.setAndThrow(`Angular Frequency must be >= 0 (received: ${received})`, {
+    kind: 'InvalidAngularFrequency',
+    received,
+  });
+}

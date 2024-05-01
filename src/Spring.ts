@@ -1,4 +1,4 @@
-import { HumpfErreur } from './HumpfErreur';
+import { throwInvalidAngularFrequency, throwInvalidDamperRatio } from './HumpfErreur';
 import { SpringConfig, type ISpringConfig } from './SpringConfig';
 import { isStable, makeSpringFn, normalizeT, toPrecision } from './utils';
 
@@ -21,10 +21,10 @@ export function Spring(config: Partial<ISpringConfig> = {}): ISpringFn {
   const conf = SpringConfig.defaults(config);
 
   if (conf.dampingRatio < 0) {
-    throw HumpfErreur.InvalidDamperRatio(conf.dampingRatio);
+    throw throwInvalidDamperRatio(conf.dampingRatio);
   }
   if (conf.angularFrequency < 0) {
-    throw HumpfErreur.InvalidAngularFrequency(conf.angularFrequency);
+    throw throwInvalidAngularFrequency(conf.angularFrequency);
   }
 
   // if there is no angular frequency or the spring is stable,
