@@ -1,0 +1,4 @@
+{
+  "vitestSingleThread": true,
+  "additionalDevDependencies": ["canvas"]
+}
