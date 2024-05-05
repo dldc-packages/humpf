@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/dldc-packages/humpf/blob/main/design/logo.png" width="597" alt="humpf logo">
+  <img src="https://github.com/dldc-packages/humpf/blob/58777da6cea44176e102204587922d7231ea2cff/design/logo.png" width="597" alt="humpf logo">
 </p>
 
 # 📐 Humpf
