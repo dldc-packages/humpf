@@ -1,10 +1,18 @@
-import type { CanvasRenderingContext2D } from 'canvas';
-import { createCanvas } from 'canvas';
-import { createWriteStream } from 'fs';
-import { resolve } from 'path';
-import type { ISpringFn } from '../src/mod';
+import type { CanvasRenderingContext2D } from "$canvas/mod.ts";
+import { createCanvas } from "$canvas/mod.ts";
+import { exists } from "$std/fs/mod.ts";
+import { resolve } from "$std/path/mod.ts";
 
-export function map(inMin: number, inMax: number, outMin: number, outMax: number, num: number): number {
+import { expect } from "$std/expect/mod.ts";
+import type { ISpringFn } from "../mod.ts";
+
+export function map(
+  inMin: number,
+  inMax: number,
+  outMin: number,
+  outMax: number,
+  num: number,
+): number {
   return ((num - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
 }
 
@@ -43,15 +51,14 @@ export async function canvasImage(
   const vel = velocity ? { height: 150, ...velocity } : null;
 
   const padding = 10;
-  const height = padding + (pos?.height ?? 0) + (pos && vel ? padding : 0) + (vel?.height ?? 0) + padding;
+  const height = padding + (pos?.height ?? 0) + (pos && vel ? padding : 0) +
+    (vel?.height ?? 0) + padding;
 
   // Create image
-  const canvas = createCanvas(200, 200);
-  canvas.width = padding + width + padding;
-  canvas.height = height;
-  const ctx = canvas.getContext('2d');
+  const canvas = createCanvas(padding + width + padding, height);
+  const ctx = canvas.getContext("2d");
   // white bg
-  ctx.fillStyle = '#fff';
+  ctx.fillStyle = "#fff";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   // set origin to chart origin
   ctx.translate(padding, padding);
@@ -63,7 +70,7 @@ export async function canvasImage(
     const { min, max, height } = pos;
 
     // chart bg
-    ctx.fillStyle = '#ECEFF1';
+    ctx.fillStyle = "#ECEFF1";
     ctx.fillRect(0, 0, width, height);
 
     if (events) {
@@ -72,7 +79,7 @@ export async function canvasImage(
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, height);
-        ctx.strokeStyle = '#607D8B';
+        ctx.strokeStyle = "#607D8B";
         ctx.stroke();
       });
     }
@@ -83,7 +90,7 @@ export async function canvasImage(
       min,
       max,
       height,
-      '#42A5F5',
+      "#42A5F5",
     );
 
     ctx.translate(0, height + padding);
@@ -94,7 +101,7 @@ export async function canvasImage(
     const { min, max, height } = vel;
 
     // chart bg
-    ctx.fillStyle = '#ECEFF1';
+    ctx.fillStyle = "#ECEFF1";
     ctx.fillRect(0, 0, width, height);
 
     if (events) {
@@ -103,7 +110,7 @@ export async function canvasImage(
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, height);
-        ctx.strokeStyle = '#607D8B';
+        ctx.strokeStyle = "#607D8B";
         ctx.stroke();
       });
     }
@@ -114,21 +121,14 @@ export async function canvasImage(
       min,
       max,
       height,
-      '#EF5350',
+      "#EF5350",
     );
   }
 
   ctx.restore();
 
-  const targetFile = resolve('tests', 'images', fileName + '.png');
-  const out = createWriteStream(targetFile);
-  const stream = canvas.createPNGStream();
-  stream.pipe(out);
-  await new Promise((resolve, reject) => {
-    stream.on('end', resolve);
-    stream.on('error', reject);
-  });
-
+  const targetFile = resolve("tests", "images", fileName + ".png");
+  await Deno.writeFile(targetFile, canvas.toBuffer());
   return values;
 }
 
@@ -151,4 +151,23 @@ function drawCurve(
     }
   });
   ctx.stroke();
+}
+
+export async function matchCanvasImage(
+  spring: ISpringFn,
+  fileName: string,
+  config: CanvasImageConfig,
+) {
+  const data = await canvasImage(
+    spring,
+    fileName,
+    config,
+  );
+  const dataPath = resolve("tests", "data", fileName + ".json");
+  if (!await exists(dataPath)) {
+    await Deno.writeTextFile(dataPath, JSON.stringify(data));
+    return;
+  }
+  const expectedData = JSON.parse(await Deno.readTextFile(dataPath));
+  expect(data).toEqual(expectedData);
 }

@@ -1,6 +1,9 @@
-import { throwInvalidAngularFrequency, throwInvalidDamperRatio } from './HumpfErreur';
-import { SpringConfig, type ISpringConfig } from './SpringConfig';
-import { isStable, makeSpringFn, normalizeT, toPrecision } from './utils';
+import {
+  throwInvalidAngularFrequency,
+  throwInvalidDamperRatio,
+} from "./HumpfErreur.ts";
+import { type ISpringConfig, SpringConfig } from "./SpringConfig.ts";
+import { isStable, makeSpringFn, normalizeT, toPrecision } from "./utils.ts";
 
 export interface ISpringResult {
   position: number;
@@ -49,7 +52,11 @@ export function Spring(config: Partial<ISpringConfig> = {}): ISpringFn {
   return springCriticallyDamped(conf, config);
 }
 
-function springIdentity(position: number, velocity: number, originalConf: Partial<ISpringConfig>): ISpringFn {
+function springIdentity(
+  position: number,
+  velocity: number,
+  originalConf: Partial<ISpringConfig>,
+): ISpringFn {
   const identity = { position, velocity };
   return makeSpringFn(
     originalConf,
@@ -60,23 +67,28 @@ function springIdentity(position: number, velocity: number, originalConf: Partia
   );
 }
 
-function springOverDamped(conf: ISpringConfig, originalConf: Partial<ISpringConfig>): ISpringFn {
+function springOverDamped(
+  conf: ISpringConfig,
+  originalConf: Partial<ISpringConfig>,
+): ISpringFn {
   const za = -conf.angularFrequency * conf.dampingRatio;
-  const zb = conf.angularFrequency * Math.sqrt(conf.dampingRatio * conf.dampingRatio - 1);
+  const zb = conf.angularFrequency *
+    Math.sqrt(conf.dampingRatio * conf.dampingRatio - 1);
   const z1 = za - zb;
   const z2 = za + zb;
   const invTwoZb = 1 / (2 * zb);
   const posDiff = conf.position - conf.equilibrium;
 
   const main = (t: number) => {
-    const [e2, e1_Over_TwoZb, e2_Over_TwoZb, z2e2_Over_TwoZb] = springOverDampedCommon(
-      t,
-      conf.timeScale,
-      conf.timeStart,
-      z1,
-      z2,
-      invTwoZb,
-    );
+    const [e2, e1_Over_TwoZb, e2_Over_TwoZb, z2e2_Over_TwoZb] =
+      springOverDampedCommon(
+        t,
+        conf.timeScale,
+        conf.timeStart,
+        z1,
+        z2,
+        invTwoZb,
+      );
     return {
       position: springOverDampedPosition(
         conf.positionPrecision,
@@ -106,14 +118,15 @@ function springOverDamped(conf: ISpringConfig, originalConf: Partial<ISpringConf
     originalConf,
     main,
     (t) => {
-      const [e2, e1_Over_TwoZb, e2_Over_TwoZb, z2e2_Over_TwoZb] = springOverDampedCommon(
-        t,
-        conf.timeScale,
-        conf.timeStart,
-        z1,
-        z2,
-        invTwoZb,
-      );
+      const [e2, e1_Over_TwoZb, e2_Over_TwoZb, z2e2_Over_TwoZb] =
+        springOverDampedCommon(
+          t,
+          conf.timeScale,
+          conf.timeStart,
+          z1,
+          z2,
+          invTwoZb,
+        );
       return springOverDampedPosition(
         conf.positionPrecision,
         conf.equilibrium,
@@ -127,14 +140,15 @@ function springOverDamped(conf: ISpringConfig, originalConf: Partial<ISpringConf
       );
     },
     (t) => {
-      const [e2, e1_Over_TwoZb, _e2_Over_TwoZb, z2e2_Over_TwoZb] = springOverDampedCommon(
-        t,
-        conf.timeScale,
-        conf.timeStart,
-        z1,
-        z2,
-        invTwoZb,
-      );
+      const [e2, e1_Over_TwoZb, _e2_Over_TwoZb, z2e2_Over_TwoZb] =
+        springOverDampedCommon(
+          t,
+          conf.timeScale,
+          conf.timeStart,
+          z1,
+          z2,
+          invTwoZb,
+        );
       return springOverDampedVelocity(
         conf.velocityPrecision,
         posDiff,
@@ -150,7 +164,12 @@ function springOverDamped(conf: ISpringConfig, originalConf: Partial<ISpringConf
   );
 }
 
-type OverDampedCommon = [e2: number, e1_Over_TwoZb: number, e2_Over_TwoZb: number, z2e2_Over_TwoZb: number];
+type OverDampedCommon = [
+  e2: number,
+  e1_Over_TwoZb: number,
+  e2_Over_TwoZb: number,
+  z2e2_Over_TwoZb: number,
+];
 
 function springOverDampedCommon(
   t: number,
@@ -181,7 +200,8 @@ function springOverDampedPosition(
   e2_Over_TwoZb: number,
 ): number {
   return toPrecision(
-    equi + posDiff * (e1_Over_TwoZb * z2 - z2e2_Over_TwoZb + e2) + vel * (-e1_Over_TwoZb + e2_Over_TwoZb),
+    equi + posDiff * (e1_Over_TwoZb * z2 - z2e2_Over_TwoZb + e2) +
+      vel * (-e1_Over_TwoZb + e2_Over_TwoZb),
     precision,
   );
 }
@@ -198,24 +218,30 @@ function springOverDampedVelocity(
 ): number {
   const z1e1_Over_TwoZb = z1 * e1_Over_TwoZb;
   return toPrecision(
-    posDiff * ((z1e1_Over_TwoZb - z2e2_Over_TwoZb + e2) * z2) + vel * (-z1e1_Over_TwoZb + z2e2_Over_TwoZb),
+    posDiff * ((z1e1_Over_TwoZb - z2e2_Over_TwoZb + e2) * z2) +
+      vel * (-z1e1_Over_TwoZb + z2e2_Over_TwoZb),
     precision,
   );
 }
 
-function springUnderDamped(conf: ISpringConfig, originalConf: Partial<ISpringConfig>): ISpringFn {
+function springUnderDamped(
+  conf: ISpringConfig,
+  originalConf: Partial<ISpringConfig>,
+): ISpringFn {
   const omegaZeta = conf.angularFrequency * conf.dampingRatio;
-  const alpha = conf.angularFrequency * Math.sqrt(1 - conf.dampingRatio * conf.dampingRatio);
+  const alpha = conf.angularFrequency *
+    Math.sqrt(1 - conf.dampingRatio * conf.dampingRatio);
   const posDiff = conf.position - conf.equilibrium;
 
   const main = (t: number) => {
-    const [invAlpha, expSin, expCos, expOmegaZetaSin_Over_Alpha] = springUnderDampedCommon(
-      t,
-      conf.timeScale,
-      conf.timeStart,
-      omegaZeta,
-      alpha,
-    );
+    const [invAlpha, expSin, expCos, expOmegaZetaSin_Over_Alpha] =
+      springUnderDampedCommon(
+        t,
+        conf.timeScale,
+        conf.timeStart,
+        omegaZeta,
+        alpha,
+      );
     return {
       position: springUnderDampedPosition(
         conf.positionPrecision,
@@ -244,13 +270,14 @@ function springUnderDamped(conf: ISpringConfig, originalConf: Partial<ISpringCon
     originalConf,
     main,
     (t) => {
-      const [invAlpha, expSin, expCos, expOmegaZetaSin_Over_Alpha] = springUnderDampedCommon(
-        t,
-        conf.timeScale,
-        conf.timeStart,
-        omegaZeta,
-        alpha,
-      );
+      const [invAlpha, expSin, expCos, expOmegaZetaSin_Over_Alpha] =
+        springUnderDampedCommon(
+          t,
+          conf.timeScale,
+          conf.timeStart,
+          omegaZeta,
+          alpha,
+        );
       return springUnderDampedPosition(
         conf.positionPrecision,
         conf.equilibrium,
@@ -263,13 +290,14 @@ function springUnderDamped(conf: ISpringConfig, originalConf: Partial<ISpringCon
       );
     },
     (t) => {
-      const [_invAlpha, expSin, expCos, expOmegaZetaSin_Over_Alpha] = springUnderDampedCommon(
-        t,
-        conf.timeScale,
-        conf.timeStart,
-        omegaZeta,
-        alpha,
-      );
+      const [_invAlpha, expSin, expCos, expOmegaZetaSin_Over_Alpha] =
+        springUnderDampedCommon(
+          t,
+          conf.timeScale,
+          conf.timeStart,
+          omegaZeta,
+          alpha,
+        );
       return springUnderDampedVelocity(
         conf.velocityPrecision,
         posDiff,
@@ -285,7 +313,12 @@ function springUnderDamped(conf: ISpringConfig, originalConf: Partial<ISpringCon
   );
 }
 
-type UnderDampedCommon = [invAlpha: number, expSin: number, expCos: number, expOmegaZetaSin_Over_Alpha: number];
+type UnderDampedCommon = [
+  invAlpha: number,
+  expSin: number,
+  expCos: number,
+  expOmegaZetaSin_Over_Alpha: number,
+];
 
 function springUnderDampedCommon(
   t: number,
@@ -316,7 +349,8 @@ function springUnderDampedPosition(
   invAlpha: number,
 ): number {
   return toPrecision(
-    equilibrium + posDiff * (expCos + expOmegaZetaSin_Over_Alpha) + velocity * (expSin * invAlpha),
+    equilibrium + posDiff * (expCos + expOmegaZetaSin_Over_Alpha) +
+      velocity * (expSin * invAlpha),
     precision,
   );
 }
@@ -338,7 +372,10 @@ function springUnderDampedVelocity(
   );
 }
 
-function springCriticallyDamped(conf: ISpringConfig, originalConf: Partial<ISpringConfig>): ISpringFn {
+function springCriticallyDamped(
+  conf: ISpringConfig,
+  originalConf: Partial<ISpringConfig>,
+): ISpringFn {
   const oldPos = conf.position - conf.equilibrium; // update in equilibrium relative space
 
   const main = (t: number) => {
@@ -409,7 +446,11 @@ function springCriticallyDamped(conf: ISpringConfig, originalConf: Partial<ISpri
   );
 }
 
-type CriticallyDampedCommon = [expTerm: number, timeExp: number, timeExpFreq: number];
+type CriticallyDampedCommon = [
+  expTerm: number,
+  timeExp: number,
+  timeExpFreq: number,
+];
 
 function springCriticallyDampedCommon(
   t: number,
@@ -433,7 +474,10 @@ function springCriticallyDampedPosition(
   timeExp: number,
   equilibrium: number,
 ): number {
-  return toPrecision(oldPos * (timeExpFreq + expTerm) + velocity * timeExp + equilibrium, precision);
+  return toPrecision(
+    oldPos * (timeExpFreq + expTerm) + velocity * timeExp + equilibrium,
+    precision,
+  );
 }
 
 function springCriticallyDampedVelocity(
@@ -444,5 +488,9 @@ function springCriticallyDampedVelocity(
   velocity: number,
   expTerm: number,
 ): number {
-  return toPrecision(oldPos * (-angularFrequency * timeExpFreq) + velocity * (-timeExpFreq + expTerm), precision);
+  return toPrecision(
+    oldPos * (-angularFrequency * timeExpFreq) +
+      velocity * (-timeExpFreq + expTerm),
+    precision,
+  );
 }

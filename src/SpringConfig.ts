@@ -108,7 +108,8 @@ function decay(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
     ...config,
   };
 
-  const equilibrium = resolved.position + findEquilibrium(resolved.velocity, resolved.angularFrequency);
+  const equilibrium = resolved.position +
+    findEquilibrium(resolved.velocity, resolved.angularFrequency);
 
   return {
     ...config,
@@ -117,7 +118,10 @@ function decay(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   };
 }
 
-function stable(equilibrium: number, config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
+function stable(
+  equilibrium: number,
+  config: Partial<ISpringConfig> = {},
+): Partial<ISpringConfig> {
   return {
     ...config,
     velocity: 0,
@@ -129,7 +133,10 @@ function stable(equilibrium: number, config: Partial<ISpringConfig> = {}): Parti
 /**
  * Find the equilibrium position for a Critically damped spring
  */
-function findEquilibrium(velocity: number, angularFrequency: number = 1): number {
+function findEquilibrium(
+  velocity: number,
+  angularFrequency: number = 1,
+): number {
   return velocity / angularFrequency;
 }
 
@@ -138,7 +145,10 @@ function findEquilibrium(velocity: number, angularFrequency: number = 1): number
  * @param springContant
  * @param mass
  */
-function angularFrequencyFromMass(mass: number, springContant: number = 1): number {
+function angularFrequencyFromMass(
+  mass: number,
+  springContant: number = 1,
+): number {
   return Math.sqrt(springContant / mass);
 }
 
@@ -147,6 +157,9 @@ function angularFrequencyFromMass(mass: number, springContant: number = 1): numb
  * @param springContant
  * @param mass
  */
-function angularFrequencyFromSpringConstant(springContant: number, mass: number = 1): number {
+function angularFrequencyFromSpringConstant(
+  springContant: number,
+  mass: number = 1,
+): number {
   return Math.sqrt(springContant / mass);
 }

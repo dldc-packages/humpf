@@ -1,5 +1,5 @@
-import type { ISpringFn, ISpringResult } from './Spring';
-import type { ISpringConfig } from './SpringConfig';
+import type { ISpringFn, ISpringResult } from "./Spring.ts";
+import type { ISpringConfig } from "./SpringConfig.ts";
 
 /**
  * This values is chosen to make a spring with dampingRatio of 0
@@ -9,7 +9,11 @@ import type { ISpringConfig } from './SpringConfig';
  */
 const NORMALIZE_TIME_MULTIPLE = Math.PI * 2;
 
-export function normalizeT(t: number, timeScale: number, timeStart: number): number {
+export function normalizeT(
+  t: number,
+  timeScale: number,
+  timeStart: number,
+): number {
   return (Math.max(0, t - timeStart) * NORMALIZE_TIME_MULTIPLE) / timeScale;
 }
 
