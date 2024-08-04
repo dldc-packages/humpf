@@ -1,23 +1,4 @@
-export interface ISpringConfig {
-  // initial position
-  position: number;
-  // initial velocity
-  velocity: number;
-  // position to approach
-  equilibrium: number;
-  // angular frequency of motion
-  angularFrequency: number;
-  // damping ratio of motion
-  dampingRatio: number;
-  // The default timeScale is 1000 so that 1 time unit is 1ms
-  // Set timeScale to 1 to make 1 unit 1s
-  timeScale: number;
-  // time at which the animation should start
-  timeStart: number;
-  positionPrecision: number;
-  velocityPrecision: number;
-  dampingRatioPrecision: number;
-}
+import type { ISpringConfig } from "./types.ts";
 
 // Default to 1000 so time is in milliseconds
 export const DEFAULT_TIME_SCALE = 1000;
@@ -38,31 +19,16 @@ export const DEFAULT_CONFIG: ISpringConfig = {
   dampingRatioPrecision: DEFAULT_PRECISION,
 };
 
-export const SpringConfig = {
-  defaults,
-  // presets
-  basic,
-  gentle,
-  wobbly,
-  stiff,
-  slow,
-  // special
-  decay,
-  stable,
-  // utils
-  findEquilibrium,
-  angularFrequencyFromMass,
-  angularFrequencyFromSpringConstant,
-};
-
-function defaults(config: Partial<ISpringConfig> = {}): ISpringConfig {
+export function defaults(config: Partial<ISpringConfig> = {}): ISpringConfig {
   return {
     ...DEFAULT_CONFIG,
     ...config,
   };
 }
 
-function basic(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
+export function basic(
+  config: Partial<ISpringConfig> = {},
+): Partial<ISpringConfig> {
   return {
     angularFrequency: 1,
     dampingRatio: 1,
@@ -70,7 +36,9 @@ function basic(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   };
 }
 
-function gentle(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
+export function gentle(
+  config: Partial<ISpringConfig> = {},
+): Partial<ISpringConfig> {
   return {
     angularFrequency: 0.6,
     dampingRatio: 0.6,
@@ -78,7 +46,9 @@ function gentle(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   };
 }
 
-function wobbly(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
+export function wobbly(
+  config: Partial<ISpringConfig> = {},
+): Partial<ISpringConfig> {
   return {
     angularFrequency: 0.8,
     dampingRatio: 0.4,
@@ -86,7 +56,9 @@ function wobbly(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   };
 }
 
-function stiff(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
+export function stiff(
+  config: Partial<ISpringConfig> = {},
+): Partial<ISpringConfig> {
   return {
     angularFrequency: 1.1,
     dampingRatio: 0.7,
@@ -94,7 +66,9 @@ function stiff(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   };
 }
 
-function slow(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
+export function slow(
+  config: Partial<ISpringConfig> = {},
+): Partial<ISpringConfig> {
   return {
     angularFrequency: 0.5,
     dampingRatio: 1,
@@ -102,7 +76,9 @@ function slow(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   };
 }
 
-function decay(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
+export function decay(
+  config: Partial<ISpringConfig> = {},
+): Partial<ISpringConfig> {
   const resolved = {
     ...DEFAULT_CONFIG,
     ...config,
@@ -118,7 +94,7 @@ function decay(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   };
 }
 
-function stable(
+export function stable(
   equilibrium: number,
   config: Partial<ISpringConfig> = {},
 ): Partial<ISpringConfig> {
@@ -133,7 +109,7 @@ function stable(
 /**
  * Find the equilibrium position for a Critically damped spring
  */
-function findEquilibrium(
+export function findEquilibrium(
   velocity: number,
   angularFrequency: number = 1,
 ): number {
@@ -145,7 +121,7 @@ function findEquilibrium(
  * @param springContant
  * @param mass
  */
-function angularFrequencyFromMass(
+export function angularFrequencyFromMass(
   mass: number,
   springContant: number = 1,
 ): number {
@@ -157,7 +133,7 @@ function angularFrequencyFromMass(
  * @param springContant
  * @param mass
  */
-function angularFrequencyFromSpringConstant(
+export function angularFrequencyFromSpringConstant(
   springContant: number,
   mass: number = 1,
 ): number {

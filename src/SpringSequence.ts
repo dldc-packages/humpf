@@ -1,7 +1,12 @@
-import type { ISpringFn, ISpringResult } from "./Spring.ts";
 import { Spring } from "./Spring.ts";
-import type { ISpringConfig } from "./SpringConfig.ts";
-import { DEFAULT_TIME_SCALE, SpringConfig } from "./SpringConfig.ts";
+import { decay as decayConf, DEFAULT_TIME_SCALE } from "./SpringConfig.ts";
+import type {
+  ISpringConfig,
+  ISpringFn,
+  ISpringResult,
+  ISpringSequence,
+  ISpringSequenceConfig,
+} from "./types.ts";
 import { makeSpringFn } from "./utils.ts";
 
 type SpringSequenceStep = {
@@ -9,36 +14,6 @@ type SpringSequenceStep = {
   config: Partial<ISpringConfig>;
   spring: ISpringFn | null;
 };
-
-export interface ISpringSequenceConfig {
-  timeScale?: number;
-  defaultConfig?: Partial<ISpringConfig>;
-  initial?: Partial<ISpringConfig>;
-}
-
-export interface ISpringSequence {
-  readonly spring: ISpringFn;
-
-  clone(): ISpringSequence;
-  setInitial(initial: Partial<ISpringConfig>): ISpringSequence;
-  setDefaultConfig(config: Partial<ISpringConfig>): ISpringSequence;
-  setTimeScale(timeScale: number): ISpringSequence;
-  insertAt(
-    time: number,
-    config: number | Partial<ISpringConfig>,
-  ): ISpringSequence;
-  replaceTail(
-    time: number,
-    config: number | Partial<ISpringConfig>,
-  ): ISpringSequence;
-  replaceAll(
-    time: number,
-    config: number | Partial<ISpringConfig>,
-  ): ISpringSequence;
-  decay(time: number, config?: Partial<ISpringConfig>): ISpringSequence;
-  clearBefore(time: number): ISpringSequence;
-  offset(offset: number): ISpringSequence;
-}
 
 export function SpringSequence(
   options: ISpringSequenceConfig = {},
@@ -294,12 +269,12 @@ function createInternal(
     config: Partial<ISpringConfig> = {},
   ): ISpringSequence {
     const stateAtTime = spring(time);
-    const decayConf = SpringConfig.decay({ ...stateAtTime, ...config });
+    const decayConfig = decayConf({ ...stateAtTime, ...config });
     const step = findMaybeStepAt(time);
     const stepIndex = step === null ? 0 : steps.indexOf(step);
     steps.splice(stepIndex, steps.length - stepIndex, {
       time,
-      config: decayConf,
+      config: decayConfig,
       spring: null,
     });
     updateFromIndex(stepIndex);

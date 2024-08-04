@@ -1,5 +1,4 @@
-import type { ISpringFn, ISpringResult } from "./Spring.ts";
-import type { ISpringConfig } from "./SpringConfig.ts";
+import type { ISpringConfig, ISpringFn, ISpringResult } from "./types.ts";
 
 /**
  * This values is chosen to make a spring with dampingRatio of 0

@@ -2,26 +2,12 @@ import {
   throwInvalidAngularFrequency,
   throwInvalidDamperRatio,
 } from "./HumpfErreur.ts";
-import { type ISpringConfig, SpringConfig } from "./SpringConfig.ts";
+import { defaults } from "./SpringConfig.ts";
+import type { ISpringConfig, ISpringFn } from "./types.ts";
 import { isStable, makeSpringFn, normalizeT, toPrecision } from "./utils.ts";
 
-export interface ISpringResult {
-  position: number;
-  velocity: number;
-}
-
-export interface ISpringFn {
-  (t: number): ISpringResult;
-  readonly position: (t: number) => number;
-  readonly velocity: (t: number) => number;
-  // returns true if the spring is stable at time t
-  // i.e. position === equilibrium && velocity === 0
-  readonly stable: (t: number) => boolean;
-  readonly config: Readonly<Partial<ISpringConfig>>;
-}
-
 export function Spring(config: Partial<ISpringConfig> = {}): ISpringFn {
-  const conf = SpringConfig.defaults(config);
+  const conf = defaults(config);
 
   if (conf.dampingRatio < 0) {
     throw throwInvalidDamperRatio(conf.dampingRatio);

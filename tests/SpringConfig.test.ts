@@ -1,4 +1,4 @@
-import { expect } from "$std/expect/mod.ts";
+import { expect } from "@std/expect";
 import { SpringConfig } from "../mod.ts";
 
 Deno.test("SpringConfig.stable config cannot override equilibrium, position & velocity", () => {

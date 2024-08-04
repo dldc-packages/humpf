@@ -1,9 +1,9 @@
-import type { CanvasRenderingContext2D } from "$canvas/mod.ts";
-import { createCanvas } from "$canvas/mod.ts";
-import { exists } from "$std/fs/mod.ts";
-import { resolve } from "$std/path/mod.ts";
+import type { CanvasRenderingContext2D } from "@gfx/canvas";
+import { createCanvas } from "@gfx/canvas";
+import { exists } from "@std/fs";
+import { resolve } from "@std/path";
 
-import { expect } from "$std/expect/mod.ts";
+import { expect } from "@std/expect";
 import type { ISpringFn } from "../mod.ts";
 
 export function map(
@@ -30,11 +30,11 @@ export type SpringExport = Array<[time: number, pos: number, vel: number]>;
  * Generate an image that show the spring
  * and returns data
  */
-export async function canvasImage(
+export function canvasImage(
   spring: ISpringFn,
   fileName: string,
   { width = 600, timeAxis, position, velocity, events }: CanvasImageConfig,
-): Promise<SpringExport> {
+): SpringExport {
   // create value for each width pixel
   const values: SpringExport = [];
   for (let x = 0; x <= width; x++) {
@@ -128,7 +128,7 @@ export async function canvasImage(
   ctx.restore();
 
   const targetFile = resolve("tests", "images", fileName + ".png");
-  await Deno.writeFile(targetFile, canvas.toBuffer());
+  canvas.save(targetFile);
   return values;
 }
 

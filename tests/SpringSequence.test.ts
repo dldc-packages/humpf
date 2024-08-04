@@ -1,4 +1,4 @@
-import { expect } from "$std/expect/mod.ts";
+import { expect } from "@std/expect";
 import { SpringSequence } from "../mod.ts";
 import { matchCanvasImage } from "./utils.ts";
 
