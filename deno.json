@@ -10,8 +10,8 @@
     "@std/path": "jsr:@std/path@^1.0.2"
   },
   "tasks": {
-    "test:run": "deno test -A --allow-ffi --unstable-ffi",
-    "test:watch": "deno test -A --allow-ffi --unstable-ffi --watch",
+    "test:run": "deno test -A --unstable-ffi",
+    "test:watch": "deno test -A --unstable-ffi --watch",
     "bump": "deno run -A jsr:@mys/bump@1",
     "update": "deno run --allow-read=. --allow-write=. --allow-net https://deno.land/x/udd@0.8.2/main.ts *.ts deno.json",
     "check": "deno fmt --check . && deno lint . && deno task test:run"

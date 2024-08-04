@@ -158,7 +158,7 @@ export async function matchCanvasImage(
   fileName: string,
   config: CanvasImageConfig,
 ) {
-  const data = await canvasImage(
+  const data = canvasImage(
     spring,
     fileName,
     config,
