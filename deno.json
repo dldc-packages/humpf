@@ -3,8 +3,8 @@
   "version": "7.0.1",
   "exports": "./mod.ts",
   "imports": {
+    "$canvas/": "https://deno.land/x/canvas@v1.4.1/",
     "@dldc/erreur": "jsr:@dldc/erreur@^7.1.1",
-    "@gfx/canvas": "jsr:@gfx/canvas@^0.5.6",
     "@std/expect": "jsr:@std/expect@^1.0.0",
     "@std/fs": "jsr:@std/fs@^1.0.1",
     "@std/path": "jsr:@std/path@^1.0.2"

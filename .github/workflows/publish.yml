@@ -17,12 +17,6 @@ jobs:
         with:
           deno-version: v1.x # Run with latest stable Deno.
 
-      - name: Install dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y -q --no-install-recommends libfontconfig1 libstdc++6
-
       - run: deno task check
 
       - run: npx jsr publish
