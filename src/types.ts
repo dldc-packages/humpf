@@ -47,18 +47,9 @@ export interface ISpringSequence {
   setInitial(initial: Partial<ISpringConfig>): ISpringSequence;
   setDefaultConfig(config: Partial<ISpringConfig>): ISpringSequence;
   setTimeScale(timeScale: number): ISpringSequence;
-  insertAt(
-    time: number,
-    config: number | Partial<ISpringConfig>,
-  ): ISpringSequence;
-  replaceTail(
-    time: number,
-    config: number | Partial<ISpringConfig>,
-  ): ISpringSequence;
-  replaceAll(
-    time: number,
-    config: number | Partial<ISpringConfig>,
-  ): ISpringSequence;
+  insertAt(time: number, config: number | Partial<ISpringConfig>): ISpringSequence;
+  replaceTail(time: number, config: number | Partial<ISpringConfig>): ISpringSequence;
+  replaceAll(time: number, config: number | Partial<ISpringConfig>): ISpringSequence;
   decay(time: number, config?: Partial<ISpringConfig>): ISpringSequence;
   clearBefore(time: number): ISpringSequence;
   offset(offset: number): ISpringSequence;

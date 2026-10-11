@@ -1,7 +1,7 @@
-import { expect } from "@std/expect";
+import { expect, test } from "vite-plus/test";
 import { SpringConfig } from "../mod.ts";
 
-Deno.test("SpringConfig.stable config cannot override equilibrium, position & velocity", () => {
+test("SpringConfig.stable config cannot override equilibrium, position & velocity", () => {
   const staticConf = SpringConfig.stable(200, {
     equilibrium: 100,
     position: 100,
@@ -12,7 +12,7 @@ Deno.test("SpringConfig.stable config cannot override equilibrium, position & ve
   expect(staticConf.velocity).toBe(0);
 });
 
-Deno.test("SpringConfig.basic", () => {
+test("SpringConfig.basic", () => {
   expect(SpringConfig.basic()).toEqual({
     angularFrequency: 1,
     dampingRatio: 1,
@@ -24,14 +24,14 @@ Deno.test("SpringConfig.basic", () => {
   });
 });
 
-Deno.test("SpringConfig.stable", () => {
+test("SpringConfig.stable", () => {
   const staticConf = SpringConfig.stable(200);
   expect(staticConf.equilibrium).toBe(200);
   expect(staticConf.position).toBe(staticConf.equilibrium);
   expect(staticConf.velocity).toBe(0);
 });
 
-Deno.test("SpringConfig.gentle", () => {
+test("SpringConfig.gentle", () => {
   expect(SpringConfig.gentle()).toEqual({
     angularFrequency: 0.6,
     dampingRatio: 0.6,
@@ -43,7 +43,7 @@ Deno.test("SpringConfig.gentle", () => {
   });
 });
 
-Deno.test("SpringConfig.defaults", () => {
+test("SpringConfig.defaults", () => {
   expect(SpringConfig.defaults({})).toEqual({
     angularFrequency: 1,
     dampingRatio: 1,
@@ -82,7 +82,7 @@ Deno.test("SpringConfig.defaults", () => {
   });
 });
 
-Deno.test("SpringConfig.slow", () => {
+test("SpringConfig.slow", () => {
   expect(SpringConfig.slow()).toEqual({
     angularFrequency: 0.5,
     dampingRatio: 1,
@@ -94,7 +94,7 @@ Deno.test("SpringConfig.slow", () => {
   });
 });
 
-Deno.test("SpringConfig.stiff", () => {
+test("SpringConfig.stiff", () => {
   expect(SpringConfig.stiff()).toEqual({
     angularFrequency: 1.1,
     dampingRatio: 0.7,
@@ -106,7 +106,7 @@ Deno.test("SpringConfig.stiff", () => {
   });
 });
 
-Deno.test("SpringConfig.wobbly", () => {
+test("SpringConfig.wobbly", () => {
   expect(SpringConfig.wobbly()).toEqual({
     angularFrequency: 0.8,
     dampingRatio: 0.4,
@@ -118,7 +118,7 @@ Deno.test("SpringConfig.wobbly", () => {
   });
 });
 
-Deno.test("SpringConfig.decay", () => {
+test("SpringConfig.decay", () => {
   expect(SpringConfig.decay()).toEqual({ dampingRatio: 1, equilibrium: 0 });
   expect(SpringConfig.decay({ position: 400 })).toEqual({
     dampingRatio: 1,
@@ -133,34 +133,22 @@ Deno.test("SpringConfig.decay", () => {
   });
 });
 
-Deno.test("SpringConfig.findEquilibrium", () => {
+test("SpringConfig.findEquilibrium", () => {
   expect(SpringConfig.findEquilibrium(0)).toEqual(0);
   expect(SpringConfig.findEquilibrium(10)).toEqual(10);
   expect(SpringConfig.findEquilibrium(10, 0.5)).toEqual(20);
 });
 
-Deno.test("SpringConfig.angularFrequencyFromMass", () => {
-  expect(SpringConfig.angularFrequencyFromMass(10)).toEqual(
-    0.31622776601683794,
-  );
+test("SpringConfig.angularFrequencyFromMass", () => {
+  expect(SpringConfig.angularFrequencyFromMass(10)).toEqual(0.31622776601683794);
   expect(SpringConfig.angularFrequencyFromMass(5)).toEqual(0.4472135954999579);
-  expect(SpringConfig.angularFrequencyFromMass(10, 2)).toEqual(
-    0.4472135954999579,
-  );
-  expect(SpringConfig.angularFrequencyFromMass(5, 2)).toEqual(
-    0.6324555320336759,
-  );
+  expect(SpringConfig.angularFrequencyFromMass(10, 2)).toEqual(0.4472135954999579);
+  expect(SpringConfig.angularFrequencyFromMass(5, 2)).toEqual(0.6324555320336759);
 });
 
-Deno.test("SpringConfig.angularFrequencyFromSpringConstant", () => {
+test("SpringConfig.angularFrequencyFromSpringConstant", () => {
   expect(SpringConfig.angularFrequencyFromSpringConstant(1)).toEqual(1);
-  expect(SpringConfig.angularFrequencyFromSpringConstant(2)).toEqual(
-    1.4142135623730951,
-  );
-  expect(SpringConfig.angularFrequencyFromSpringConstant(1, 10)).toEqual(
-    0.31622776601683794,
-  );
-  expect(SpringConfig.angularFrequencyFromSpringConstant(2, 10)).toEqual(
-    0.4472135954999579,
-  );
+  expect(SpringConfig.angularFrequencyFromSpringConstant(2)).toEqual(1.4142135623730951);
+  expect(SpringConfig.angularFrequencyFromSpringConstant(1, 10)).toEqual(0.31622776601683794);
+  expect(SpringConfig.angularFrequencyFromSpringConstant(2, 10)).toEqual(0.4472135954999579);
 });

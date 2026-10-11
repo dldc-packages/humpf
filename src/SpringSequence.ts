@@ -15,9 +15,7 @@ type SpringSequenceStep = {
   spring: ISpringFn | null;
 };
 
-export function SpringSequence(
-  options: ISpringSequenceConfig = {},
-): ISpringSequence {
+export function SpringSequence(options: ISpringSequenceConfig = {}): ISpringSequence {
   return createInternal([], options);
 }
 
@@ -91,9 +89,7 @@ function createInternal(
    * On initial config, if only one of position or equilibrium is defined,
    * we set the other one to the same value.
    */
-  function resolveInitialConfig(
-    initial: Partial<ISpringConfig>,
-  ): Partial<ISpringConfig> {
+  function resolveInitialConfig(initial: Partial<ISpringConfig>): Partial<ISpringConfig> {
     if (initial.position === undefined && initial.equilibrium === undefined) {
       return { ...initial, position: 0, equilibrium: 0 };
     }
@@ -114,9 +110,7 @@ function createInternal(
     if (indexResolved >= steps.length) {
       return;
     }
-    let prev: ISpringFn = indexResolved === 0
-      ? initialSpring
-      : stepSpringOrThrow(steps[index - 1]);
+    let prev: ISpringFn = indexResolved === 0 ? initialSpring : stepSpringOrThrow(steps[index - 1]);
     for (let i = index; i < steps.length; i++) {
       const step = steps[i];
       const spring = createSpring(step.time, prev(step.time), step.config);
@@ -139,7 +133,7 @@ function createInternal(
     };
     const conf: Partial<ISpringConfig> = {
       // inject current state (position & velocity)
-      ...(current ?? {}),
+      ...current,
       // user config, note that user can override velocity and position by defining them in the config !
       ...resolved,
       // Override timeScale by the one defined in the SpringSequence
@@ -198,10 +192,7 @@ function createInternal(
   /**
    * Insert a new step at the specified time
    */
-  function insertAt(
-    time: number,
-    config: number | Partial<ISpringConfig>,
-  ): ISpringSequence {
+  function insertAt(time: number, config: number | Partial<ISpringConfig>): ISpringSequence {
     const step = findMaybeStepAt(time);
     const newStep: SpringSequenceStep = {
       time,
@@ -230,10 +221,7 @@ function createInternal(
   /**
    * Add a new step and remove any step after it
    */
-  function replaceTail(
-    time: number,
-    config: number | Partial<ISpringConfig>,
-  ): ISpringSequence {
+  function replaceTail(time: number, config: number | Partial<ISpringConfig>): ISpringSequence {
     const step = findMaybeStepAt(time);
     const stepIndex = step === null ? 0 : steps.indexOf(step);
     steps.splice(stepIndex + 1, steps.length - stepIndex, {
@@ -248,10 +236,7 @@ function createInternal(
   /**
    * Replace all the steps by the new one
    */
-  function replaceAll(
-    time: number,
-    config: number | Partial<ISpringConfig>,
-  ): ISpringSequence {
+  function replaceAll(time: number, config: number | Partial<ISpringConfig>): ISpringSequence {
     steps.splice(0, steps.length, {
       time,
       config: resolveConfig(config),
@@ -264,10 +249,7 @@ function createInternal(
   /**
    * Decay at time and remove everything after
    */
-  function decay(
-    time: number,
-    config: Partial<ISpringConfig> = {},
-  ): ISpringSequence {
+  function decay(time: number, config: Partial<ISpringConfig> = {}): ISpringSequence {
     const stateAtTime = spring(time);
     const decayConfig = decayConf({ ...stateAtTime, ...config });
     const step = findMaybeStepAt(time);
@@ -309,9 +291,7 @@ function createInternal(
   }
 }
 
-function resolveConfig(
-  conf: number | Partial<ISpringConfig>,
-): Partial<ISpringConfig> {
+function resolveConfig(conf: number | Partial<ISpringConfig>): Partial<ISpringConfig> {
   return typeof conf === "number" ? { equilibrium: conf } : conf;
 }
 

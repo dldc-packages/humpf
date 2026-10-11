@@ -26,9 +26,7 @@ export function defaults(config: Partial<ISpringConfig> = {}): ISpringConfig {
   };
 }
 
-export function basic(
-  config: Partial<ISpringConfig> = {},
-): Partial<ISpringConfig> {
+export function basic(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   return {
     angularFrequency: 1,
     dampingRatio: 1,
@@ -36,9 +34,7 @@ export function basic(
   };
 }
 
-export function gentle(
-  config: Partial<ISpringConfig> = {},
-): Partial<ISpringConfig> {
+export function gentle(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   return {
     angularFrequency: 0.6,
     dampingRatio: 0.6,
@@ -46,9 +42,7 @@ export function gentle(
   };
 }
 
-export function wobbly(
-  config: Partial<ISpringConfig> = {},
-): Partial<ISpringConfig> {
+export function wobbly(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   return {
     angularFrequency: 0.8,
     dampingRatio: 0.4,
@@ -56,9 +50,7 @@ export function wobbly(
   };
 }
 
-export function stiff(
-  config: Partial<ISpringConfig> = {},
-): Partial<ISpringConfig> {
+export function stiff(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   return {
     angularFrequency: 1.1,
     dampingRatio: 0.7,
@@ -66,9 +58,7 @@ export function stiff(
   };
 }
 
-export function slow(
-  config: Partial<ISpringConfig> = {},
-): Partial<ISpringConfig> {
+export function slow(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   return {
     angularFrequency: 0.5,
     dampingRatio: 1,
@@ -76,16 +66,14 @@ export function slow(
   };
 }
 
-export function decay(
-  config: Partial<ISpringConfig> = {},
-): Partial<ISpringConfig> {
+export function decay(config: Partial<ISpringConfig> = {}): Partial<ISpringConfig> {
   const resolved = {
     ...DEFAULT_CONFIG,
     ...config,
   };
 
-  const equilibrium = resolved.position +
-    findEquilibrium(resolved.velocity, resolved.angularFrequency);
+  const equilibrium =
+    resolved.position + findEquilibrium(resolved.velocity, resolved.angularFrequency);
 
   return {
     ...config,
@@ -109,10 +97,7 @@ export function stable(
 /**
  * Find the equilibrium position for a Critically damped spring
  */
-export function findEquilibrium(
-  velocity: number,
-  angularFrequency: number = 1,
-): number {
+export function findEquilibrium(velocity: number, angularFrequency: number = 1): number {
   return velocity / angularFrequency;
 }
 
@@ -121,10 +106,7 @@ export function findEquilibrium(
  * @param springContant
  * @param mass
  */
-export function angularFrequencyFromMass(
-  mass: number,
-  springContant: number = 1,
-): number {
+export function angularFrequencyFromMass(mass: number, springContant: number = 1): number {
   return Math.sqrt(springContant / mass);
 }
 

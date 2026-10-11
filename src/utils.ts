@@ -8,11 +8,7 @@ import type { ISpringConfig, ISpringFn, ISpringResult } from "./types.ts";
  */
 const NORMALIZE_TIME_MULTIPLE = Math.PI * 2;
 
-export function normalizeT(
-  t: number,
-  timeScale: number,
-  timeStart: number,
-): number {
+export function normalizeT(t: number, timeScale: number, timeStart: number): number {
   return (Math.max(0, t - timeStart) * NORMALIZE_TIME_MULTIPLE) / timeScale;
 }
 

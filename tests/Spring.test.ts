@@ -1,12 +1,12 @@
-import { expect } from "@std/expect";
+import { expect, test } from "vite-plus/test";
 import { Spring, SpringConfig } from "../mod.ts";
 import { matchCanvasImage } from "./utils.ts";
 
-Deno.test("Create a spring does not throw", () => {
+test("Create a spring does not throw", () => {
   expect(() => Spring()).not.toThrow();
 });
 
-Deno.test("Basic spring is working", async () => {
+test("Basic spring is working", async () => {
   const spring = Spring();
   expect(spring(0)).toEqual({ position: 0, velocity: 0 });
   // almost there after 1 time unit
@@ -22,7 +22,7 @@ Deno.test("Basic spring is working", async () => {
   });
 });
 
-Deno.test("When dampingRatio=0 it goes back to position after 1 unit of time", async () => {
+test("When dampingRatio=0 it goes back to position after 1 unit of time", async () => {
   const spring = Spring({
     timeScale: 1,
     position: 0,
@@ -39,7 +39,7 @@ Deno.test("When dampingRatio=0 it goes back to position after 1 unit of time", a
   });
 });
 
-Deno.test("Spring position is the same as spring().position", () => {
+test("Spring position is the same as spring().position", () => {
   const spring = Spring();
   expect(spring.position(0)).toEqual(spring(0).position);
   expect(spring.position(300)).toEqual(spring(300).position);
@@ -47,7 +47,7 @@ Deno.test("Spring position is the same as spring().position", () => {
   expect(spring.position(1000)).toEqual(spring(1000).position);
 });
 
-Deno.test("Spring velocity is the same as spring().velocity", () => {
+test("Spring velocity is the same as spring().velocity", () => {
   const spring = Spring();
   expect(spring.velocity(0)).toEqual(spring(0).velocity);
   expect(spring.velocity(300)).toEqual(spring(300).velocity);
@@ -55,7 +55,7 @@ Deno.test("Spring velocity is the same as spring().velocity", () => {
   expect(spring.velocity(1000)).toEqual(spring(1000).velocity);
 });
 
-Deno.test("Equilibrium option", () => {
+test("Equilibrium option", () => {
   const spring = Spring({ equilibrium: 200 });
   expect(spring(0)).toEqual({ position: 0, velocity: 0 });
   expect(spring(500)).toEqual({
@@ -73,14 +73,14 @@ Deno.test("Equilibrium option", () => {
   expect(spring(4000)).toEqual({ position: 200, velocity: 0 });
 });
 
-Deno.test("No angularFrequency is static", () => {
+test("No angularFrequency is static", () => {
   const spring = Spring({ angularFrequency: 0 });
   expect(spring(0)).toEqual({ position: 0, velocity: 0 });
   expect(spring(500)).toEqual({ position: 0, velocity: 0 });
   expect(spring(1000)).toEqual({ position: 0, velocity: 0 });
 });
 
-Deno.test("Overdamped spring", async () => {
+test("Overdamped spring", async () => {
   const spring = Spring({ dampingRatio: 2, equilibrium: 100 });
   expect(spring(0)).toEqual({ position: 0, velocity: -0 });
   expect(spring(500)).toEqual({
@@ -103,7 +103,7 @@ Deno.test("Overdamped spring", async () => {
   });
 });
 
-Deno.test("Underdamped spring", async () => {
+test("Underdamped spring", async () => {
   const spring = Spring({ dampingRatio: 0.5, equilibrium: 100 });
   expect(spring(0)).toEqual({ position: 0, velocity: 0 });
   expect(spring(200)).toEqual({
@@ -138,7 +138,7 @@ Deno.test("Underdamped spring", async () => {
   });
 });
 
-Deno.test("TimeStart option", async () => {
+test("TimeStart option", async () => {
   const spring = Spring({ timeStart: 1000, equilibrium: 100 });
   expect(spring(0)).toEqual({ position: 0, velocity: 0 });
   expect(spring(500)).toEqual({ position: 0, velocity: 0 });
@@ -161,7 +161,7 @@ Deno.test("TimeStart option", async () => {
   });
 });
 
-Deno.test("Negative timeStart option", async () => {
+test("Negative timeStart option", async () => {
   const spring = Spring({ timeStart: -500, equilibrium: 100 });
   expect(spring(-500)).toEqual({ position: 0, velocity: 0 });
   expect(spring(-200)).toEqual({
@@ -183,7 +183,7 @@ Deno.test("Negative timeStart option", async () => {
   });
 });
 
-Deno.test("Decay", async () => {
+test("Decay", async () => {
   const spring = Spring(SpringConfig.decay({ velocity: 5 }));
   expect(spring(0)).toEqual({ position: 0, velocity: 5 });
   expect(spring(250)).toEqual({
@@ -206,7 +206,7 @@ Deno.test("Decay", async () => {
   });
 });
 
-Deno.test("Identity spring", async () => {
+test("Identity spring", async () => {
   const spring = Spring({ angularFrequency: 0.0000000001 });
   expect(spring.position(0)).toEqual(0);
   expect(spring.position(1000)).toEqual(0);
@@ -220,7 +220,7 @@ Deno.test("Identity spring", async () => {
   });
 });
 
-Deno.test("Stable spring", () => {
+test("Stable spring", () => {
   const spring = Spring({
     position: 100,
     equilibrium: 100,
@@ -232,12 +232,12 @@ Deno.test("Stable spring", () => {
   expect(spring.velocity(1000)).toEqual(0.000000000001);
 });
 
-Deno.test("Throw if angular frequency is less than 0", () => {
+test("Throw if angular frequency is less than 0", () => {
   expect(() => Spring({ angularFrequency: 0 })).not.toThrow();
   expect(() => Spring({ angularFrequency: -1 })).toThrow();
 });
 
-Deno.test("Throw if angular dampingRatio is less than 0", () => {
+test("Throw if angular dampingRatio is less than 0", () => {
   expect(() => Spring({ dampingRatio: 0 })).not.toThrow();
   expect(() => Spring({ dampingRatio: -1 })).toThrow();
 });
