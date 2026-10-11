@@ -12,9 +12,9 @@ npm install @dldc/humpf
 
 ## What is this
 
-This a library that let you animate using a
+This is a library that lets you animate using
 [Damped Springs](http://www.ryanjuckett.com/programming/damped-springs/). The
-awesome thing about springs is that they can model all king of motions:
+awesome thing about springs is that they can model all kinds of motions:
 
 - ✅ From A to B with a rebound at the end
 - ✅ From A to B smoothly
@@ -22,78 +22,79 @@ awesome thing about springs is that they can model all king of motions:
 
 ## Difference with other libraries
 
-Most library out there will model spring by updating a value: on each frame they
-compute the forces applyed on the value and upate it accordingly. Humpf is
-different because it does not update a value but give you a function that take
-the **time** as parameter and return the **position** and **velocity** (speed)
-at that position in time.
+Most libraries out there model a spring by updating a value: on each frame they
+compute the forces applied on the value and update it accordingly. Humpf is
+different because it doesn't update a value but gives you a function that takes
+the **time** as a parameter and returns the **position** and **velocity**
+(speed) at that time.
 
 ## Gist
 
 ```ts
 import { Spring } from "@dldc/humpf";
 
-const spring = Spring();
+// A spring from 0 to its equilibrium of 100
+const spring = Spring({ equilibrium: 100 });
 
 spring(0); // { pos: 0, vel: 0 }
-spring(100); //  { pos: 26.4241, vel: 36.7879  }
-spring(200); //  { pos: 59.3994, vel: 27.0670 }
-spring(300); //  { pos: 80.0851, vel: 14.9361 }
-spring(500); //  { pos: 95.9572, vel: 3.3689 }
-spring(1000); //  { pos: 99.95006, vel: 0.0453 }
-spring(10000); //  { pos: 100, vel: 0 }
+spring(100); // { pos: 13.1312, vel: 33.52 }
+spring(200); // { pos: 35.7739, vel: 35.7651 }
+spring(300); // { pos: 56.196, vel: 28.6204 }
+spring(500); // { pos: 82.1025, vel: 13.576 }
+spring(1000); // { pos: 98.6399, vel: 1.1733 }
+spring(10000); // { pos: 100, vel: 0 }
 ```
 
 ## Options
 
-You can pass different options to the spring to change it's behavior:
+You can pass different options to the spring to change its behavior:
 
 ```ts
 // all the options (see below for more details)
 Spring({
-  position: 0, // initial velocity
+  position: 0, // initial position
   equilibrium: 100, // position to approach (aka "to")
   velocity: 0, // initial velocity
   angularFrequency: 1, // how fast does it move ?
   dampingRatio: 1, // how much is it slowed down ?
-  timeStart: 0, // time at which the annimation should start
-  timeScale: 1 / 100, // [ADVANCED] change time scale
+  timeStart: 0, // time at which the animation should start
+  timeScale: 100, // [ADVANCED] change time scale
 });
 ```
 
 ### `position` (default `0`)
 
-This is the initiale position of the spring: the value when it starts (at
+This is the initial position of the spring: the value it has when it starts (at
 `timeStart`).
 
-### `equilibrium` (default `100`)
+### `equilibrium` (default `1`)
 
 The equilibrium position of the spring: the value it will reach over time. If
-your spring bounce it will occilate around this value.
+your spring bounces it will oscillate around this value.
 
 ### `velocity` (default `0`)
 
-The initial velocity of the spring. `0` mean it's stationary.
+The initial velocity of the spring. `0` means it's stationary.
 
-**Example**: If your spring goes from `0` to `100`, a positive `velocity` mean
+**Example**: If your spring goes from `0` to `100`, a positive `velocity` means
 it's already going up so it will go faster. A negative velocity means it's going
-in the oposite direction and will go down a little before going up.
+in the opposite direction and will go down a little before going up.
 
-### `angularFrequency` (default `0`)
+### `angularFrequency` (default `1`)
 
-The angular frequency of your spring define how fast it wants to move. If you
-have a very bouncy spring (not much friction), the angular frequency define how
+The angular frequency of your spring defines how fast it wants to move. If you
+have a very bouncy spring (not much friction), the angular frequency defines how
 many back and forth will happen.
 
-**Example**: `10` mean a lot of back and forth, so your spring will move fast.
-`0.5` is much lower so your spring will be slower
+**Example**: `10` means a lot of back and forth, so your spring will move fast.
+`0.5` is much lower so your spring will be slower.
 
 ### `dampingRatio` (default `1`)
 
-The damping ratio define how much resistance (friction) is opposed to your
+The damping ratio defines how much resistance (friction) is opposed to your
 spring.\
 If the damping ratio is less than `1` your spring will overshoot and bounce. If
-it's under `1` it will not.\
+it's over `1` it will not.\
 If the damping ratio is `1` it will reach the equilibrium as fast as possible
 without bouncing.
 
@@ -102,14 +103,14 @@ without bouncing.
 The time at which the spring should start.\
 Usually you want to pass the current time to start a spring "now".
 
-**Note**: spring does not work in reverse, so you you try to get a value for a
+**Note**: spring does not work in reverse, so if you try to get a value for a
 time before `timeStart` it will return the initial state.
 
-### `timeScale` (default `1 / 100`)
+### `timeScale` (default `1000`)
 
-The `timeScale` allow you to change how time is interpreted. The default value
-`1/100` will make your spring to take about a second to reach equilibrium. You
-probably don't need to change this.
+The `timeScale` allows you to change how time is interpreted. The default value
+`1000` means time is in milliseconds and the spring will take about a second to
+reach its equilibrium. You probably don't need to change this.
 
 ## Math equations
 
